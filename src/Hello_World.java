@@ -9,7 +9,7 @@ public class Hello_World
         System.out.println("Press any key ...");
         
         // Test text
-        // test 2
+        // test 23
         Button.waitForAnyPress();
     }
 }    
