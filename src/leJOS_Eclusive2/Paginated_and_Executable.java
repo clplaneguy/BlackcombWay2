@@ -38,7 +38,7 @@ import lejos.utility.Delay;
  *                                                                                                                                                                                                             
  * <p><i>This code is based on the HTWay by HiTechnic and the programs by BB and gloomyandy.</i></p>                                                                                                             
  *                                                                                                                                                                                                                
- * @author clplaneguy   123                                                                                                                                                                                                          
+ * @author clplaneguy   1234                                                                                                                                                                                                    
  *                                                                                                                                                                                                                                       
  */                                                                                                                                                                                                                                     
 public class Paginated_and_Executable extends Thread                                                                                                                                    
