@@ -36,7 +36,7 @@ import lejos.utility.Delay;
  *                                                                                                                                                                                                            
  * <p><i>This code is based on the HTWay by HiTechnic and the program by BB</i></p>                                                                                                            
  *                                                                                                                                                                                                               
- * @author GloomyAndy 1                                                                                                                                                                                                             
+ * @author GloomyAndy 123456                                                                                                                                                                                                             
  *                                                                                                                                                                                                                                      
  */                                                                                                                                                                                                                                    
 public class Segoway_Original extends Thread
