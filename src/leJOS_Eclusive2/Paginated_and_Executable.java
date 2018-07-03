@@ -22,8 +22,15 @@ import lejos.utility.Delay;
 //                      ******
 //                          **
 //                              *
-/**                                                                                                                                                                                                                           
- * <p>                                                                                                 
+//	**************************                                                                                                                                                                                                                           
+//		**********************
+//			******************
+//				**************
+//					**********
+//						******
+//							**
+//								*
+/* <p>                                                                                                 
  * <li>This class balances a two-wheeled Segway-like robot. It works with almost any construction                                                                                                                 
  * (short or tall) such as the                                                   
  * <li><a> href="http://www.laurensvalk.com/nxt-2_0-only/anyway">Anyway</a>    
@@ -608,7 +615,7 @@ public class Paginated_and_Executable extends Thread
         //NOTE: Balance control loop only takes 0.63ms in EV3 leJOS EVJ 0.9.1-beta after 10,000,000 iterations                 //                                           //                                                
         System.out.println("loopCount is " + loopCount);                                                                       //                                           //                 
                                                                                                                                //                                           //              
-        
+                                                                                                                               //                                           //                                                       
         //while(loopCount<=1E0)  //           1   Done                                                                         //                                           //                       
         //while(loopCount<=1E1)  //          10   Done                                                                         //                                           //                       
         //while(loopCount<=1E2)  //         100   Done                                                                         //                                           //                       
