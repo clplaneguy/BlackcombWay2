@@ -4,44 +4,45 @@ import java.io.BufferedWriter;
 import java.io.File;                            
 import java.io.FileWriter;                  
 import java.io.IOException;      
-                                 
-import lejos.hardware.Sound;      
-import lejos.hardware.lcd.LCD;                      
-import lejos.hardware.motor.UnregulatedMotor;                                                                                                                                                                            
-import lejos.hardware.sensor.EV3GyroSensor;                                                                                                                                                                    
-import lejos.robotics.EncoderMotor;                                                                                                                                                                               
-import lejos.robotics.SampleProvider;         
-import lejos.utility.Delay;                                                                                                                                                                                        
-                                                                                                                                                                                                                
-//1234567891234567892234567893                                                                           
-//  **************************                                                                           
-//      **********************                                                                  
-//          ******************      Spaces                                                          
-//              **************                                                   
-//                  **********                                                    
-//                      ******                                                 
-//                          **                                                
-//                              *                                            
-//1234567891234567892234567893                                                                           
-//	**************************                                                                                                                                                                                                                                    
-//		**********************                                               
-//			******************      Tabs                                 
-//				**************                                        
-//					**********                                     
-//						******                                      
-//							**                                          
-//								*                               
-/* <p>                                                                                                 
+                                                                         
+import lejos.hardware.Sound;                                             
+import lejos.hardware.lcd.LCD;                                                 
+import lejos.hardware.motor.UnregulatedMotor;                                                                                                                                                                                    
+import lejos.hardware.sensor.EV3GyroSensor;                                                                                                                                                                     
+import lejos.robotics.EncoderMotor;                                                                                                                                                                                
+import lejos.robotics.SampleProvider;                                       
+import lejos.utility.Delay;                                                                                                                                                                                            
+                                                                                                                                                                                                                 
+//1234567891234567892234567893                                                                              
+//  **************************                                                                            
+//      **********************                                                                   
+//          ******************      Spaces                                                           
+//              **************                                                          
+//                  **********                                                       
+//                      ******                                                   
+//                          **                                                   
+//                              *                                                      
+//1234567891234567892234567893                                                                               
+//	**************************                                                                                                                                                                                                                                     
+//		**********************                                                       
+//			******************      Tab = 4 spaces                                    
+//				**************                                                    
+//					**********                                                  
+//						******                                                       
+//							**                                                           
+//								*                                                               
+                                                                                                
+/* <p>                                                                                                             
  * <li>This class balances a two-wheeled Segway-like robot. It works with almost any construction                                                                                                                 
- * (short or tall) such as the                                                   
- * <li><a> href="http://www.laurensvalk.com/nxt-2_0-only/anyway">Anyway</a>    
- * <li>or the                                                                        
- * <li><a> href="http://www.hitechnic.com/blog/gyro-sensor/htway/"HTWay</a></p> 
- *                                                                                                                      
- * <p>Wheel diameter is the most important construction variable, which is specified in the constructor.</p>                                                                                                                          
- *                                                                                                                                                                                                   
- * <p>To start the robot balancing:                                                                                                                                                                   
- * <li>1. Run the program. You will be prompted to lay it down.                                                                                                                                                                             
+ * (short or tall) such as the                                                                    
+ * <li><a> href="http://www.laurensvalk.com/nxt-2_0-only/anyway">Anyway</a>                         
+ * <li>or the                                                                                               
+ * <li><a> href="http://www.hitechnic.com/blog/gyro-sensor/htway/"HTWay</a></p>                                
+ *                                                                                                                            
+ * <p>Wheel diameter is the most important construction variable, which is specified in the constructor.</p>                                                                                                                                 
+ *                                                                                                                                                                                                        
+ * <p>To start the robot balancing:                                                                                                                                                                        
+ * <li>1. Run the program. You will be prompted to lay it down.                                                                                                                                                                                
  * <li>2. Lay it down (orientation doesn't matter). When it detects it is not moving it will automatically calibrate the gyro sensor.                                                                                                                   
  * <li>3. When the beeping begins, stand it up so it is vertically balanced.                                                                                                                                                   
  * <li>4. When the beeping stops, let go and it will begin balancing on its own.</p>                                                                                                                               
@@ -84,9 +85,9 @@ public class Paginated_and_Executable extends Thread
      * NOTE: Balance control loop only takes 0.63ms in EV3 leJOS EVJ 0.9.1-beta after 10,000,000 iterations                                                                                                            
      */                                                                                                                                                                     //                    
     //private static final int WAIT_TIME = 9; // originally 8                                                                                                               //                                    
-    //private static final int WAIT_TIME = 0; // originally 8                                                                                                                 //                                    
+    //private static final int WAIT_TIME = 0; // originally 8                                                                                                               //                                    
     //private static final int WAIT_TIME = 8; // originally 8                                                                                                               //                                    
-    private static final int WAIT_TIME = 7; // originally 8                                                                                                               //                                    
+    private static final int WAIT_TIME = 7; // originally 8                                                                                                                 //                                    
                                                                                                                                                                             //                                                        
     // These are the main four balance constants, only the gyro                                                                                                             //                                                                                           
     // constants are relative to the wheel size.  KPOS and KSPEED                                                                                                           //                                                                                            
@@ -124,9 +125,9 @@ public class Paginated_and_Executable extends Thread
      * robot has fallen.                                                                                                                                                             
      */                                                                                                                                                                     //                                     
     //private static final double TIME_FALL_LIMIT = 2000; // originally 1000                                                                                                //                                                                            
-    //private static final double TIME_FALL_LIMIT = 200000; // originally 1000                                                                                                //                                                                            
-    //private static final double TIME_FALL_LIMIT = 1E3; // originally 1000                                                                                                //                                                                            
-    private static final double TIME_FALL_LIMIT = 2E3; // originally 1000                                                                                                //                                                                            
+    //private static final double TIME_FALL_LIMIT = 200000; // originally 1000                                                                                              //                                                                            
+    //private static final double TIME_FALL_LIMIT = 1E3; // originally 1000                                                                                                 //                                                                            
+    private static final double TIME_FALL_LIMIT = 2E3; // originally 1000                                                                                                   //                                                                            
                                                                                                                                                                             //                                                     
     //---------------------------------------------------------------------                                                                                                 //                                                                                
                                                                                                                                                                             //                             
@@ -216,13 +217,6 @@ public class Paginated_and_Executable extends Thread
                                                                                                                                                                             //                                             
     int loopCount = 1;            // postpone activation of the motors until dt in the loop is stable            // From GyroBoy                                            //                       
                                                                                                                                                                             //            
-    //int TestInterval = (int) 1E1;    //         10;      Did not work                                                                                                     //                                     
-    //int TestInterval = (int) 1E2;    //        100;      Stoped at 52                                                                                                     //                                         
-    //int TestInterval = (int) 1E3;    //       1000;      Stoped at 972                                                                                                    //                                                     
-    //int TestInterval = (int) 1E4;    //      10000;      Stoped at 9966                                                                                                   //                                  
-    int TestInterval = (int) 1E5;      //     100000;      Stoped at 15993 of 16043                                                                                         //                              
-    //int TestInterval = (int) 1E6;    //    1000000;      Program ended                                                                                                    //                                
-                                                                                                                                                                            //              
     BufferedWriter bw = null;                                                                                                                                               //                    
     //boolean Debug = false;                                                                                                                                                //                                  
     boolean Debug = true;                                                                                                                                                   //                                   
@@ -231,7 +225,15 @@ public class Paginated_and_Executable extends Thread
     double AverageMS;         //    1E6   ms                                                                                                                                //                     
     double AverageS;    //    1E6   ms                                                                                                                                      //                 
     double KGYROANGLE2 = 9; double KGYROSPEED2 = 3; double KPOS2 = 0.08; double KSPEED2 = 0.2;    double KDRIVE2 = 0.2;                                                     //               
+    long freeMemory = Runtime.getRuntime().freeMemory();                                                                                                                    //                                         
                                                                                                                                                                             //          
+    //int TestInterval = (int) 1E1;    //         10;      Did not work                                                                                                     //                                     
+    //int TestInterval = (int) 1E2;    //        100;      Stoped at 52                                                                                                     //                                         
+    //int TestInterval = (int) 1E3;    //       1000;      Stoped at 972                                                                                                    //                                                     
+    //int TestInterval = (int) 1E4;    //      10000;      Stoped at 9966                                                                                                   //                                  
+    int TestInterval = (int) 1E5;      //     100000;      Stoped at 15993 of 16043                                                                                         //                              
+    //int TestInterval = (int) 1E6;    //    1000000;      Program ended                                                                                                    //                                
+                                                                                                                                                                            //              
     double[] TestIntervalA      =  new double [TestInterval] ;                                                                                                              //            
     int   [] loopCountA         =  new int    [TestInterval] ;                                                                                                              //                             
     double[] gyroAngleA         =  new double [TestInterval] ;                                                                                                              //             
@@ -254,6 +256,7 @@ public class Paginated_and_Executable extends Thread
     double[] RunTimeMSA         =  new double [TestInterval] ;                                                                                                              //            
     double[] RunTimeSA          =  new double [TestInterval] ;                                                                                                              //            
     double[] motorControlDriveA =  new double [TestInterval] ;    //    target speed in degrees per second                                                                  //            
+    long  [] freeMemoryA        =  new long   [TestInterval] ;                                                                                                              //            
                                                                                                                                                                             //               
                                                                                                                                                                             //                                               
                                                                                                                                                                             //                                                         
@@ -615,7 +618,8 @@ public class Paginated_and_Executable extends Thread
         System.out.printf("TIME_FALL_LIMIT is %10.0f(ms)\n", TIME_FALL_LIMIT);                                                 //                                           //                                     
         //NOTE: Balance control loop only takes 0.63ms in EV3 leJOS EVJ 0.9.1-beta after 10,000,000 iterations                 //                                           //                                                
         System.out.println("loopCount is " + loopCount);                                                                       //                                           //                 
-                                                                                                                               //                                           //              
+        System.out.println("Free Memory is " + freeMemory)    ;                                                                                                           //                                           //              
+        System.out.println();                                                                                                  //                                           //                                                    
                                                                                                                                //                                           //                                                       
         //while(loopCount<=1E0)  //           1   Done                                                                         //                                           //                       
         //while(loopCount<=1E1)  //          10   Done                                                                         //                                           //                       
@@ -660,7 +664,7 @@ public class Paginated_and_Executable extends Thread
                                                                                                         //                     //                                           //                                       
             RunTimeMS = System.currentTimeMillis() - StartTime;                                         //                     //                                           //                                                                           
             RunTimeS  = RunTimeMS*1E-3;                                                                 //                     //                                           //                                                                           
-            	                                                                                        //                     //                                           //                                  
+            freeMemory = Runtime.getRuntime().freeMemory();                                             //                     //                                           //                                  
                                                                                                         //                     //                                           //                                       
             if (Debug)                                                                                  //                     //                                           //                              
             //if (false)                                                                                //                     //                                           //                              
@@ -689,7 +693,8 @@ public class Paginated_and_Executable extends Thread
             		RunTimeMSA          [loopCount-1]  =  RunTimeMS             ;    //    //           //                     //                                           //                                                
             		RunTimeSA           [loopCount-1]  =  RunTimeS              ;    //    //           //                     //                                           //                                               
             		motorControlDriveA  [loopCount-1]  =  motorControlDrive     ;    //    //           //                     //                                           //                                              
-                    }    ////    if (loopCount <= TestInterval)  //////////////////////    //           //                     //                                           //                                         
+            		freeMemoryA         [loopCount-1]  =  freeMemory            ;    //    //           //                     //                                           //                                              
+            		}    ////    if (loopCount <= TestInterval)  //////////////////////    //           //                     //                                           //                                         
                                                                                            //           //                     //                                           //                                            
                 }    ///////////////    if (Debug)    ///////////////////////////////////////           //                     //                                           //                                            
                                                                                                         //                     //                                           //                                         
@@ -719,7 +724,7 @@ public class Paginated_and_Executable extends Thread
                               loopCount,          RunTimeS/60,   RunTimeS%60,                           AverageMS);            //                                           //                                                                                                                                     
         try                                                                                                                    //                                           //                                                                                                                           
             {    /////////////////////////////////////////////////////////////////////////////                                 //                                           //                                                                                                                                
-            bw.write("   loopCount, i, j, loopCountA[j],      gyroAngleA[j],              gyroSpeedA[j],              motorPosA[j],         motorSpeedA[j],     powerA[j], PowerLeftA[j], tIntervalA[j], RunTimeMSA[j], RunTimeSA[j], motorControlDriveA[j]  ");                                                  
+            bw.write("   loopCount, i, j, loopCountA[j],      gyroAngleA[j],              gyroSpeedA[j],              motorPosA[j],         motorSpeedA[j],     powerA[j], PowerLeftA[j], tIntervalA[j], RunTimeMSA[j], RunTimeSA[j], motorControlDriveA[j], freeMemoryA  ");                                                  
             bw.newLine();                                                                   //                                 //                                           //                                                                                                                                   
             }    /////////////////////////////////////////////////////////////////////////////                                 //                                           //                                                                                                                                         
         catch (IOException e1)                                                                                                 //                                           //                                                                                                                                     
@@ -735,8 +740,8 @@ public class Paginated_and_Executable extends Thread
                 {    /////////////////////////////////////////////////////////////////////////        //                       //                                           //                                                                                                                        
                 try                                                                         //        //                       //                                           //                                                                                                                                           
                     {    ///////////////////////////////////////////////////////////////    //        //                       //                                           //                                                                                                                                           
-                    bw.write(String.format("   %5d,   %10d,  %10d,      %10d,              %10.10f,                        %10.10f,                %10.10f,               %10.10f,            %10.10f ,     %10.10f,       %10.10f,      %10.10f,        %10.10f,      %10.10f     ",                                                  
-                                            loopCount,  i,     j,     loopCountA[j],   KGYROANGLE2*gyroAngleA[j],  KGYROSPEED2*gyroSpeedA[j],   KPOS2*motorPosA[j] ,  KSPEED2*motorSpeedA[j], powerA[j], powerLeftA[j], tIntervalA[j], RunTimeMSA[j], RunTimeSA[j], motorControlDriveA[j]));                                           
+                    bw.write(String.format("   %5d,   %10d,  %10d,      %10d,              %10.10f,                        %10.10f,                %10.10f,               %10.10f,            %10.10f ,     %10.10f,       %10.10f,      %10.10f,        %10.10f,      %10.10f,             %10d     ",                                                  
+                                            loopCount,  i,     j,     loopCountA[j],   KGYROANGLE2*gyroAngleA[j],  KGYROSPEED2*gyroSpeedA[j],   KPOS2*motorPosA[j] ,  KSPEED2*motorSpeedA[j], powerA[j], powerLeftA[j], tIntervalA[j], RunTimeMSA[j], RunTimeSA[j], motorControlDriveA[j], freeMemoryA[j]    ));                                           
                     bw.newLine();                                                     //    //        //                       //                                           //                                                                                                                                 
                     }    ///////////////////////////////////////////////////////////////    //        //                       //                                           //                                                                                                                                   
                 catch (IOException e)                                                       //        //                       //                                           //                                                                                                                               
