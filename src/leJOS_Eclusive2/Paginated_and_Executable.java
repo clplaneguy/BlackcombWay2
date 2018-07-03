@@ -14,12 +14,17 @@ package leJOS_Eclusive2;
 //		**********************                                                       
 //			******************      Tab = 4 spaces                                    
 //				**************                                                    
-//					**********                                                  
-//						******                                                       
-//							**                                                           
-//								*                                                               
-                                                                                                
-import java.io.BufferedWriter;                    
+//					**********                                                               
+//						******                                                              
+//							**                                                                    
+//								*                                                                         
+//1234567891234567892234567893                                                                                            
+//	**********************                                                                         
+//		**************         Tab = 8 spaces                                                  
+//			******                                                       
+//				*                                             
+
+import java.io.BufferedWriter;                            
 import java.io.File;                            
 import java.io.FileWriter;                  
 import java.io.IOException;      
