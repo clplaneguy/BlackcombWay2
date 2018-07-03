@@ -13,7 +13,15 @@ import lejos.robotics.EncoderMotor;
 import lejos.robotics.SampleProvider;         
 import lejos.utility.Delay;                                                                                                                                                                                        
                                                                                                                                                                                                                 
-                                                                                                                                                                                                      
+//1234567891234567892234567893
+//  **************************
+//      **********************
+//          ******************
+//              **************
+//                  **********
+//                      ******
+//                          **
+//                              *
 /**                                                                                                                                                                                                                           
  * <p>                                                                                                 
  * <li>This class balances a two-wheeled Segway-like robot. It works with almost any construction                                                                                                                 
@@ -599,8 +607,8 @@ public class Paginated_and_Executable extends Thread
         System.out.printf("TIME_FALL_LIMIT is %10.0f(ms)\n", TIME_FALL_LIMIT);                                                 //                                           //                                     
         //NOTE: Balance control loop only takes 0.63ms in EV3 leJOS EVJ 0.9.1-beta after 10,000,000 iterations                 //                                           //                                                
         System.out.println("loopCount is " + loopCount);                                                                       //                                           //                 
-        //while(loopCount<=1)                                                                                                  //                                           //                       
-        //int TestInterval = (int) 1E1;    //         10;                                                                        //                                           //                                     
+                                                                                                                               //                                           //              
+        
         //while(loopCount<=1E0)  //           1   Done                                                                         //                                           //                       
         //while(loopCount<=1E1)  //          10   Done                                                                         //                                           //                       
         //while(loopCount<=1E2)  //         100   Done                                                                         //                                           //                       
@@ -609,7 +617,7 @@ public class Paginated_and_Executable extends Thread
         //while(loopCount<=1E5)  //      100000   Done                                                                         //                                           //                       
         //while(loopCount<=1E6)  //     1000000   Done                                                                         //                                           //                       
         //while(loopCount<=1E7)  //    10000000   Done                                                                         //                                           //                       
-        //while(loopCount<=1E8)  //   100000000                                                                                //                                           //                       
+        //while(loopCount<=1E8)  //   100000000   Never finishes                                                               //                                           //                       
         //while(loopCount<=1E9)  //  1000000000                                                                                //                                           //                       
         //while(loopCount<=1E10) // 10000000000                                                                                //                                           //                       
         while(running)                                                                                                         //                                           //                       
