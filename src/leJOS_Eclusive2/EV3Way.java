@@ -86,7 +86,7 @@ public class EV3Way
         Port port = LocalEV3.get().getPort("S1");                                                                      
         EV3IRSensor ir = new EV3IRSensor(port);                                                                              
         //while(Segoway.isRunning())                                                                                                  
-        while (Button.ESCAPE.isUp())                                                                                                                                                                                                              
+        while (Button.ESCAPE.isUp())                                                                                                                                                                                                               
         	{                                                                                                                                                         
             System.out.println("while (Button.ESCAPE.isUp())");                                                        
             // Gyro seems to reset from time to time, give it a kick                                                                                                                                                                                      

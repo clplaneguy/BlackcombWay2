@@ -312,7 +312,7 @@ public class Segoway extends Thread
      * also checks the maximum and minimum during that time and if the difference is larger                                                                                                                                                                           
      * than one (1), it rejects the data and gets another set of samples.                                                                                                                                                                                                  
      */                                                                                                                                                                                                          
-    private void calibrateGyro()                                                                                                                                                                                
+    private void calibrateGyro()                                                                                                                                                                                 
         {                                                                                                                  
         System.out.println();             
         System.out.println();               
