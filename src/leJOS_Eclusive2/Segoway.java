@@ -232,11 +232,11 @@ public class Segoway extends Thread
     double KGYROANGLE2 = 9; double KGYROSPEED2 = 3; double KPOS2 = 0.08; double KSPEED2 = 0.2;    double KDRIVE2 = 0.2;                                                     //               
     long freeMemory = Runtime.getRuntime().freeMemory();                                                                                                                    //                                         
                                                                                                                                                                             //          
-    //int TestInterval = (int) 1E1;    //         10;      Did not work                                                                                                     //                                     
+    int TestInterval = (int) 1E1;    //         10;      Did not work                                                                                                     //                                     
     //int TestInterval = (int) 1E2;    //        100;      Stoped at 52                Added close Buffered Writer                                                          //                                         
     //int TestInterval = (int) 1E3;    //       1000;      Stoped at 972               Added close Buffered Writer                                                          //                                                     
     //int TestInterval = (int) 1E4;    //      10000;      Stoped at 9966              Added close Buffered Writer                                                          //                                  
-    int TestInterval = (int) 1E5;      //     100000;      Stoped at 15993 of 16043    Added close Buffered Writer                                                          //                              
+    //int TestInterval = (int) 1E5;      //     100000;      Stoped at 15993 of 16043    Added close Buffered Writer                                                          //                              
     //int TestInterval = (int) 1E6;    //    1000000;      Program ended                                                                                                    //                                
                                                                                                                                                                             //              
     double[] TestIntervalA      =  new double [TestInterval] ;                                                                                                              //            
@@ -671,8 +671,8 @@ public class Segoway extends Thread
             RunTimeS  = RunTimeMS*1E-3;                                                                 //                     //                                           //                                                                           
             freeMemory = Runtime.getRuntime().freeMemory();                                             //                     //                                           //                                  
                                                                                                         //                     //                                           //                                       
-            if (Debug)                                                                                  //                     //                                           //                              
-            //if (false)                                                                                //                     //                                           //                              
+            //if (Debug)                                                                                  //                     //                                           //                              
+            if (false)                                                                                //                     //                                           //                              
                 {    ////////////////////////////////////////////////////////////////////////           //                     //                                           // 
             	if (loopCount <= TestInterval)                                             //           //                     //                                           //                                
             	    {    //////////////////////////////////////////////////////////////    //           //                     //                                           //        
