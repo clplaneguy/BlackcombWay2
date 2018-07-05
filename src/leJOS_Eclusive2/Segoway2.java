@@ -63,7 +63,7 @@ import lejos.utility.Delay;
  * @author clplaneguy   123456                                                                                                                                                                                                    
  *                                                                                                                                                                                                                                       
  */
-public class Segoway extends Thread {
+public class Segoway2 extends Thread {
 
 	// Motors and gyro:
 	private EV3GyroSensor ev3Gyro;
@@ -294,7 +294,7 @@ public class Segoway extends Thread {
 	 *            diameter of wheel, preferably use cm (printed on side of LEGO
 	 *            tires in mm)
 	 */
-	public Segoway(UnregulatedMotor left, UnregulatedMotor right, EV3GyroSensor ev3Gyro, double wheelDiameter) {
+	public Segoway2(UnregulatedMotor left, UnregulatedMotor right, EV3GyroSensor ev3Gyro, double wheelDiameter) {
 		this.left_motor = left;
 		this.right_motor = right;
 
@@ -325,7 +325,7 @@ public class Segoway extends Thread {
 		System.out.println();
 		System.out.println();
 		System.out.println();
-		LCD.clear();
+		LCD.clear(); 
 		LCD.drawString("EV3 Segoway", 0, 0);
 		LCD.drawString("Steady robot", 0, 2);
 		LCD.drawString("to calibrate", 0, 3);

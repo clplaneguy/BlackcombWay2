@@ -88,7 +88,7 @@ public class EV3Way2 {
 		Port port = LocalEV3.get().getPort("S1");
 		EV3IRSensor ir = new EV3IRSensor(port);
 		// while(Segoway.isRunning())
-		 while (true)
+		 while (true) 
 	        {
 	        	System.out.println("while (Button.ESCAPE.isUp())");
 			// Gyro seems to reset from time to time, give it a kick
@@ -98,17 +98,17 @@ public class EV3Way2 {
 			
 			// Segoway segway = new Segoway(left, right, gyro, WHEEL_SIZE);
 
-	        Thread segway = new Segoway(left, right, gyro, WHEEL_SIZE);    // From krchilders
+	        Thread segway = new Segoway2(left, right, gyro, WHEEL_SIZE);    // From krchilders
 			segway.setPriority(Thread.MAX_PRIORITY);                       // From krchilders
 			segway.setDaemon(true);                                        // From krchilders
 			segway.start();                                                // From krchilders
 			segway.join();                                                 // From krchilders
 
-			((Segoway) segway).wheelDriver(0, 0);
+			((Segoway2) segway).wheelDriver(0, 0);
 			Sound.beep();
 			int speed = 0;  
 			int steer = 0;
-			while(((Segoway) segway).isRunning()) {
+			while(((Segoway2) segway).isRunning()) {
 			//while (isRunning()) {
 					// System.out.println("Inside while(Paginated_Executable.isRunning())");
 				int cmd = ir.getRemoteCommand(0);
@@ -130,9 +130,9 @@ public class EV3Way2 {
 					steer = 0;
 					break;
 				}
-				((Segoway) segway).wheelDriver(speed + steer, speed - steer);
+				((Segoway2) segway).wheelDriver(speed + steer, speed - steer);
 				if (Button.ESCAPE.isDown())
-					((Segoway) segway).halt();
+					((Segoway2) segway).halt();
 				Delay.msDelay(100);
 			}
 			// waitForRelease(startStop);
