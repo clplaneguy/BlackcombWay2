@@ -76,7 +76,7 @@ public class EV3Way2 {
 		System.out.printf("%20s\tEV3Way_Paginated_Executable2\n", "Eclipse name:");
 
 		System.out.println();
-		// System.out.printf("\t\tStart\n");
+		// System.out.printf("\t\tStart\n"); 
 		// long lastTimeStep = System.nanoTime();
 		// System.out.println("System time is " + System.nanoTime());
 		System.out.println();
@@ -99,10 +99,10 @@ public class EV3Way2 {
 			// Segoway segway = new Segoway(left, right, gyro, WHEEL_SIZE);
 
 	        Thread segway = new Segoway2(left, right, gyro, WHEEL_SIZE);    // From krchilders
-			segway.setPriority(Thread.MAX_PRIORITY);                       // From krchilders
-			segway.setDaemon(true);                                        // From krchilders
-			segway.start();                                                // From krchilders
-			segway.join();                                                 // From krchilders
+			segway.setPriority(Thread.MAX_PRIORITY);                        // From krchilders
+			segway.setDaemon(true);                                         // From krchilders
+			segway.start();                                                 // From krchilders
+			segway.join();                                                  // From krchilders
 
 			((Segoway2) segway).wheelDriver(0, 0);
 			Sound.beep();

@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.UnregulatedMotor;
@@ -223,53 +224,52 @@ public class Segoway2 extends Thread {
 	long now2;
 	long mrcLeft, mrcRight, mrcDelta; // Segoway original
 
-	int loopCount = 1; // postpone activation of the motors until dt in the loop is stable // From
 	// GyroBoy
 
 	BufferedWriter bw = null;
 	// boolean Debug = false;
 	boolean Debug = true;
-	double RunTimeMS;
-	double RunTimeS;
-	double AverageMS; // 1E6 ms
-	double AverageS; // 1E6 ms
-	double KGYROANGLE2 = 9;
-	double KGYROSPEED2 = 3;
-	double KPOS2 = 0.08;
-	double KSPEED2 = 0.2;
-	double KDRIVE2 = 0.2;
-	long freeMemory = Runtime.getRuntime().freeMemory();
+	double  RunTimeMS;
+	double  RunTimeS;
+	double  AverageMS; // 1E6 ms
+	double  AverageS;  // 1E6 ms
+	double  KGYROANGLE2 = 9;
+	double  KGYROSPEED2 = 3;
+	double  KPOS2 = 0.08;
+	double  KSPEED2 = 0.2;
+	double  KDRIVE2 = 0.2;
+	long    freeMemory = Runtime.getRuntime().freeMemory();
 
-	int TestInterval = (int) 1E1; // 10; Did not work
-	// int TestInterval = (int) 1E2; // 100; Stoped at 52                  Added close Buffered Writer
-	// int TestInterval = (int) 1E3; // 1000; Stoped at 972                Added close Buffered Writer
-	// int TestInterval = (int) 1E4; // 10000; Stoped at 9966              Added close Buffered Writer
-	// int TestInterval = (int) 1E5; // 100000; Stoped at 15993 of 16043   Added close Buffered Writer
-	// int TestInterval = (int) 1E6; // 1000000; Program ended
+	//int TestInterval = (int) 1E1; // 10; Did not work
+	// int TestInterval = (int) 1E2; //      100; Stoped at 52               Added close Buffered Writer
+	// int TestInterval = (int) 1E3; //     1000; Stoped at 972              Added close Buffered Writer
+	// int TestInterval = (int) 1E4; //    10000; Stoped at 9966             Added close Buffered Writer
+	 int TestInterval = (int) 1E5; //   100000; Stoped at 15993 of 16043   Added close Buffered Writer
+	// int TestInterval = (int) 1E6; //  1000000; Program ended
 
-	double[] TestIntervalA      = new double[TestInterval] ;
-	int   [] loopCountA         = new    int[TestInterval] ;
-	double[] gyroAngleA         = new double[TestInterval] ;
-	double[] gyroSpeedA         = new double[TestInterval] ;
-	double[] motorPosA          = new double[TestInterval] ;
-	double[] motorSpeedA        = new double[TestInterval] ;
-	double[] gAngleGlobalA      = new double[TestInterval] ;
-	double[] mrcDeltaA          = new double[TestInterval] ;
-	double[] mrcDeltaP1A        = new double[TestInterval] ;
-	double[] mrcDeltaP2A        = new double[TestInterval] ;
-	double[] mrcDeltaP3A        = new double[TestInterval] ;
-	double[] powerA             = new double[TestInterval] ;
-	double[] powerLeftA         = new double[TestInterval] ;
-	double[] powerRightA        = new double[TestInterval] ;
-	double[] mrcLeftA           = new double[TestInterval] ;
-	double[] mrcRightA          = new double[TestInterval] ;
-	double[] tCalcStartA        = new double[TestInterval] ;
-	double[] tIntervalA         = new double[TestInterval] ;
-	double[] tMotorPosOKA       = new double[TestInterval] ;
-	double[] RunTimeMSA         = new double[TestInterval] ;
-	double[] RunTimeSA          = new double[TestInterval] ;
-	double[] motorControlDriveA = new double[TestInterval] ; // target speed in degrees per second
-	  long[] freeMemoryA        = new   long[TestInterval] ;
+	double[] TestIntervalA      = new double [TestInterval] ;
+	int   [] loopCountA         = new    int [TestInterval] ;
+	double[] gyroAngleA         = new double [TestInterval] ;
+	double[] gyroSpeedA         = new double [TestInterval] ;
+	double[] motorPosA          = new double [TestInterval] ;
+	double[] motorSpeedA        = new double [TestInterval] ;
+	double[] gAngleGlobalA      = new double [TestInterval] ;
+	double[] mrcDeltaA          = new double [TestInterval] ;
+	double[] mrcDeltaP1A        = new double [TestInterval] ;
+	double[] mrcDeltaP2A        = new double [TestInterval] ;
+	double[] mrcDeltaP3A        = new double [TestInterval] ;
+	double[] powerA             = new double [TestInterval] ;
+	double[] powerLeftA         = new double [TestInterval] ;
+	double[] powerRightA        = new double [TestInterval] ;
+	double[] mrcLeftA           = new double [TestInterval] ;
+	double[] mrcRightA          = new double [TestInterval] ;
+	double[] tCalcStartA        = new double [TestInterval] ;
+	double[] tIntervalA         = new double [TestInterval] ;
+	double[] tMotorPosOKA       = new double [TestInterval] ;
+	double[] RunTimeMSA         = new double [TestInterval] ;
+	double[] RunTimeSA          = new double [TestInterval] ;
+	double[] motorControlDriveA = new double [TestInterval] ; // target speed in degrees per second
+	  long[] freeMemoryA        = new   long [TestInterval] ;
 
 	/**
 	 * Creates an instance of the Segoway, prompts the user to steady Segoway for
@@ -310,116 +310,115 @@ public class Segoway2 extends Thread {
 
 		// Play warning beep sequence before balance starts
 		startBeeps();
-	}
-
-	/**
-	 * This function returns a suitable initial gyro offset. It takes 200 gyro
-	 * samples over a time of 1 second and averages them to get the offset. It also
-	 * checks the maximum and minimum during that time and if the difference is
-	 * larger than one (1), it rejects the data and gets another set of samples.
-	 */
-	private void calibrateGyro() {
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		LCD.clear(); 
-		LCD.drawString("EV3 Segoway", 0, 0);
-		LCD.drawString("Steady robot", 0, 2);
-		LCD.drawString("to calibrate", 0, 3);
-		LCD.drawString("the gyro", 0, 4);
-
-		double gSum;
-		int i, gMin, gMax, g;
-
-		do {
-			ev3Gyro.reset();
-
-			gSum = 0.0;
-			gMin = 1000;
-			gMax = -1000;
-
-			for (i = 1; i <= 200; i++) {
-				spGyro.fetchSample(gyroSample, 0);
-				g = (int) gyroSample[0];
-
-				if (g > gMax) {
-					gMax = g;
-				}
-				if (g < gMin) {
-					gMin = g;
-				}
-
-				gSum += g; 
-				try {
-					Thread.sleep(5);
-				} catch (InterruptedException e) {
-					// Ignore
-				}
-			}
-
-		} while ((gMax - gMin) > 1); // Reject and sample again if range too large
-
-		// Average the sum of the samples.
-		// Used to have +1, which was mainly for stopping Segoway wandering.
-		gOffset = gSum / 1000;
-
-		if (invertGyro) {
-			gOffset = gOffset * -1;
-		}
-
-	}
-
-	/**
-	 * Warn user the Segoway is about to start balancing.
-	 */
-	private void startBeeps() {
-
-		System.out.println("Balance in");
-
-		// Play warning beep sequence to indicate balance about to start
-		for (int c = 5; c > 0; c--) {
-			System.out.print(c + " ");
-			Sound.playTone(440, 100);
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-			}
-		}
-		System.out.println("GO");
-		System.out.println();
-	}
-
-	/**
-	 * Get the data from the gyro. Fills the pass by reference gyroSpeed and
-	 * gyroAngle based on updated information from the Gyro Sensor. Maintains an
-	 * automatically adjusted gyro offset as well as the integrated gyro angle.
-	 * 
-	 */
-	private void updateGyroData() {
-		// NOTE: The GyroSensor class actually rebaselines for drift ever 5 seconds.
-		// This not needed? Or is this method better? Some of this fine tuning may
-		// actually interfere with fine-tuning happening in the hardcoded dIMU and
-		// GyroScope code. As of EV3 0.8.1-beta drift accounting is still needed.
-		float gyroRaw;
-		spGyro.fetchSample(gyroSample, 0);
-
-		gyroRaw = gyroSample[0]; // deg/s
-
-		if (invertGyro) {
-			gyroRaw = (-1 * gyroRaw);
-		}
-
-		gOffset = EMAOFFSET * gyroRaw + (1 - EMAOFFSET) * gOffset;
-		gyroSpeed = gyroRaw - gOffset; // Angular velocity (degrees/sec)
-
-		gAngleGlobal += gyroSpeed * tInterval;
-		gyroAngle = gAngleGlobal; // Absolute angle (degrees)
-	}
-
-	/**
+	}                                                                                                           
+                                                                                                                           
+	/**                                                                                 //  From krchilders                                       
+	 * This function returns a suitable initial gyro offset. It takes 200 gyro          //  From krchilders                                
+	 * samples over a time of 1 second and averages them to get the offset. It also     //  From krchilders                           
+	 * checks the maximum and minimum during that time and if the difference is         //  From krchilders                           
+	 * larger than one (1), it rejects the data and gets another set of samples.        //  From krchilders                             
+	 */                                                                                 //  From krchilders                          
+	private void calibrateGyro() {                                                      //  From krchilders                            
+		System.out.println();                                                                           
+		System.out.println();                                                                              
+		System.out.println();                                                                                 
+		System.out.println();                                                                                 
+		System.out.println();                                                                                 
+		System.out.println();                                                                                
+		LCD.clear();                                                                    //  From krchilders                         
+		LCD.drawString("EV3 Segoway", 0, 0);                                            //  From krchilders                        
+		LCD.drawString("Steady robot", 0, 2);                                           //  From krchilders            
+		LCD.drawString("to calibrate", 0, 3);                                           //  From krchilders                  
+		LCD.drawString("the gyro", 0, 4);                                               //  From krchilders     
+	                                                                                    //  From krchilders                 
+		double gSum;                                                                    //  From krchilders                                         
+		int i, gMin, gMax, g;                                                           //  From krchilders                                           
+	                                                                                    //  From krchilders                                 
+		do {                                                                            //  From krchilders                                     
+			ev3Gyro.reset();                                                            //  From krchilders
+		                                                                                //  From krchilders
+			gSum = 0.0;                                                                 //  From krchilders                                                    
+			gMin = 1000;                                                                //  From krchilders                                    
+			gMax = -1000;                                                               //  From krchilders                   
+		                                                                                //  From krchilders
+			for (i = 1; i <= 200; i++) {                                                //  From krchilders                                          
+				spGyro.fetchSample(gyroSample, 0);                                      //  From krchilders                                                
+				g = (int) gyroSample[0];                                                //  From krchilders                                          
+			                                                                            //  From krchilders  
+				if (g > gMax) {                                                         //  From krchilders                         
+					gMax = g;                                                           //  From krchilders                    
+				}                                                                       //  From krchilders             
+				if (g < gMin) {                                                         //  From krchilders              
+					gMin = g;                                                           //  From krchilders                       
+				}                                                                       //  From krchilders                              
+			                                                                            //  From krchilders        
+				gSum += g;                                                              //  From krchilders                  
+				try {                                                                   //  From krchilders                                    
+					Thread.sleep(5);                                                    //  From krchilders                                          
+				} catch (InterruptedException e) {                                      //  From krchilders                                                                     
+					// Ignore                                                           //  From krchilders                                                       
+				}                                                                       //  From krchilders                                                            
+			}                                                                           //  From krchilders                                    
+		                                                                                //  From krchilders                                  
+		} while ((gMax - gMin) > 1); // Reject and sample again if range too large      //  From krchilders                             
+	                                                                                    //  From krchilders                                  
+		// Average the sum of the samples.                                              //  From krchilders                    
+		// Used to have +1, which was mainly for stopping Segoway wandering.            //  From krchilders                             
+		gOffset = gSum / 1000;                                                          //  From krchilders           
+	                                                                                    //  From krchilders      
+		if (invertGyro) {                                                               //  From krchilders                            
+			gOffset = gOffset * -1;                                                     //  From krchilders                       
+		}                                                                               //  From krchilders
+	  }                                                                                 //  From krchilders              
+                                                                                                    
+	/**                                                                                                              
+	 * Warn user the Segoway is about to start balancing.                                                                   
+	 */                                                                                                          
+	private void startBeeps() {                                                                                                                                            
+                                                                                                             
+		System.out.println("Balance in");                                                                             
+                                                                                                                    
+		// Play warning beep sequence to indicate balance about to start                                                    
+		for (int c = 5; c > 0; c--) {                                                                                                
+			System.out.print(c + " ");                                                                                
+			Sound.playTone(440, 100);                                                                                   
+			try {                                                                                                    
+				Thread.sleep(1000);                                                                                     
+			} catch (InterruptedException e) {                                                                           
+			}                                                                                                                
+		}                                                                                                            
+		System.out.println("GO");                                                                                      
+		System.out.println();                                                                                       
+	}                                                                                                                 
+                                                                                                                         
+	/**                                                                                                                  
+	 * Get the data from the gyro. Fills the pass by reference gyroSpeed and                                                       
+	 * gyroAngle based on updated information from the Gyro Sensor. Maintains an                                          
+	 * automatically adjusted gyro offset as well as the integrated gyro angle.                                          
+	 *                                                                                                                  
+	 */                                                                                                                        
+	private void updateGyroData() {                                                                                           
+		// NOTE: The GyroSensor class actually rebaselines for drift ever 5 seconds.                                              
+		// This not needed? Or is this method better? Some of this fine tuning may                                                     
+		// actually interfere with fine-tuning happening in the hardcoded dIMU and                                            
+		// GyroScope code. As of EV3 0.8.1-beta drift accounting is still needed.                                       
+		float gyroRaw;                                                                                                     
+		spGyro.fetchSample(gyroSample, 0);                                                                                      
+                                                                                                                        
+		gyroRaw = gyroSample[0]; // deg/s                                                                                      
+                                                                                                                          
+		if (invertGyro) {                                                                                             
+			gyroRaw = (-1 * gyroRaw);                                                                                     
+		}                                                                                                                    
+                                                                                                                              
+		gOffset = EMAOFFSET * gyroRaw + (1 - EMAOFFSET) * gOffset;                                                             
+		gyroSpeed = gyroRaw - gOffset; // Angular velocity (degrees/sec)                                                                                   
+                                                                                                                              
+		gAngleGlobal += gyroSpeed * tInterval;                                                                                      
+		gyroAngle = gAngleGlobal; // Absolute angle (degrees)                                                                                   
+	}                                                                                                                     
+                                                                                                                              
+	/**                     
 	 * Keeps track of wheel position with both motors.
 	 */
 	private void updateMotorData() {
@@ -562,11 +561,14 @@ public class Segoway2 extends Thread {
 	//
 	public void run() {
 
-		double power = 0;
-		double smoothPower = 0.0;
-		long tMotorPosOK;
-		long cLoop = 0;
-		long StartTime = System.currentTimeMillis(); // 1E9
+		running = true;
+		
+		int     loopCount    =  1; // postpone activation of the motors until dt in the loop is stable // From
+		double  power        =  0;
+		double  smoothPower  =  0.0;
+		long    cLoop        =  0;
+		long    StartTime    =  System.currentTimeMillis(); // 1E9
+		long    tMotorPosOK  =  System.currentTimeMillis();
 
 		try {
 			// Specify the file name and path here
@@ -589,8 +591,7 @@ public class Segoway2 extends Thread {
 		System.out.println("Balancing");
 		System.out.println();
 
-		tMotorPosOK = System.currentTimeMillis();
-
+		
 		// Reset the motors to make sure we start at a zero position
 		left_motor.resetTachoCount();
 		right_motor.resetTachoCount();
@@ -602,19 +603,47 @@ public class Segoway2 extends Thread {
 		System.out.println("loopCount is " + loopCount);
 		System.out.println("Free Memory is " + freeMemory);
 		System.out.println();
-
-		// while(loopCount<=1E0) // 1 Done
-		// while(loopCount<=1E1) // 10 Done
-		// while(loopCount<=1E2) // 100 Done
-		// while(loopCount<=1E3) // 1000 Done
-		// while(loopCount<=1E4) // 10000 Done
-		// while(loopCount<=1E5) // 100000 Done
-		// while(loopCount<=1E6) // 1000000 Done
-		// while(loopCount<=1E7) // 10000000 Done
-		// while(loopCount<=1E8) // 100000000 Never finishes
-		// while(loopCount<=1E9) // 1000000000
-		// while(loopCount<=1E10) // 10000000000
+		fatigue = 0;
+		
+		// while(loopCount<=1E0)  //            1 Done
+		// while(loopCount<=1E1)  //           10 Done
+		// while(loopCount<=1E2)  //          100 Done
+		// while(loopCount<=1E3)  //         1000 Done
+		// while(loopCount<=1E4)  //        10000 Done
+		// while(loopCount<=1E5)  //       100000 Done
+		// while(loopCount<=1E6)  //      1000000 Done
+		// while(loopCount<=1E7)  //     10000000 Done
+		// while(loopCount<=1E8)  //    100000000 Never finishes
+		// while(loopCount<=1E9)  //   1000000000
+		// while(loopCount<=1E10) //  10000000000
 		while (running) {
+			 //if (false) {
+		     if (Debug) {
+			 			if (loopCount <= TestInterval) {
+							TestIntervalA      [loopCount - 1]  =  TestInterval;
+							gyroAngleA         [loopCount - 1]  =  gyroAngle;
+							gyroSpeedA         [loopCount - 1]  =  gyroSpeed;
+							motorPosA          [loopCount - 1]  =  motorPos;
+							motorSpeedA        [loopCount - 1]  =  motorSpeed;
+							gAngleGlobalA      [loopCount - 1]  =  gAngleGlobal;
+							mrcDeltaA          [loopCount - 1]  =  mrcDelta;
+							mrcDeltaP1A        [loopCount - 1]  =  mrcDeltaP1;
+							mrcDeltaP2A        [loopCount - 1]  =  mrcDeltaP2;
+							mrcDeltaP3A        [loopCount - 1]  =  mrcDeltaP3;
+							powerLeftA         [loopCount - 1]  =  powerLeft;
+							powerRightA        [loopCount - 1]  =  powerRight;
+							mrcLeftA           [loopCount - 1]  =  mrcLeft;
+							mrcRightA          [loopCount - 1]  =  mrcRight;
+							tCalcStartA        [loopCount - 1]  =  tCalcStart;
+							tIntervalA         [loopCount - 1]  =  tInterval;
+							RunTimeMSA         [loopCount - 1]  =  RunTimeMS;
+							RunTimeSA          [loopCount - 1]  =  RunTimeS;
+							motorControlDriveA [loopCount - 1]  =  motorControlDrive;
+							freeMemoryA        [loopCount - 1]  =  freeMemory;
+							loopCountA         [loopCount - 1]  =  loopCount;
+							powerA             [loopCount - 1]  =  power;
+							tMotorPosOKA       [loopCount - 1]  =  tMotorPosOK;
+									}
 			calcInterval(cLoop++);
 
 			updateGyroData();
@@ -648,41 +677,14 @@ public class Segoway2 extends Thread {
 			RunTimeS = RunTimeMS * 1E-3;
 			freeMemory = Runtime.getRuntime().freeMemory();
 
-			 if (Debug) {
-			//if (false) {
-				if (loopCount <= TestInterval) {
-					TestIntervalA[loopCount - 1] = TestInterval;
-					loopCountA[loopCount - 1] = loopCount;
-					gyroAngleA[loopCount - 1] = gyroAngle;
-					gyroSpeedA[loopCount - 1] = gyroSpeed;
-					motorPosA[loopCount - 1] = motorPos;
-					motorSpeedA[loopCount - 1] = motorSpeed;
-					gAngleGlobalA[loopCount - 1] = gAngleGlobal;
-					mrcDeltaA[loopCount - 1] = mrcDelta;
-					mrcDeltaP1A[loopCount - 1] = mrcDeltaP1;
-					mrcDeltaP2A[loopCount - 1] = mrcDeltaP2;
-					mrcDeltaP3A[loopCount - 1] = mrcDeltaP3;
-					powerA[loopCount - 1] = power;
-					powerLeftA[loopCount - 1] = powerLeft;
-					powerRightA[loopCount - 1] = powerRight;
-					mrcLeftA[loopCount - 1] = mrcLeft;
-					mrcRightA[loopCount - 1] = mrcRight;
-					tCalcStartA[loopCount - 1] = tCalcStart;
-					tIntervalA[loopCount - 1] = tInterval;
-					tMotorPosOKA[loopCount - 1] = tMotorPosOK;
-					RunTimeMSA[loopCount - 1] = RunTimeMS;
-					RunTimeSA[loopCount - 1] = RunTimeS;
-					motorControlDriveA[loopCount - 1] = motorControlDrive;
-					freeMemoryA[loopCount - 1] = freeMemory;
-				} //// if (loopCount <= TestInterval) //////////////////////
-
-			} /////////////// if (Debug)
+			
+			}
 
 			if (RunTimeS % 20 < 1)
 				System.out.println(fatigue);
 			if (fatigue > TIME_FALL_LIMIT)
 				running = false;
-			Delay.msDelay(1);
+			Delay.msDelay(1); 
 			Delay.msDelay(WAIT_TIME - (System.currentTimeMillis() - tCalcStart));
 			loopCount++;
 		} // end of while() loop
@@ -738,7 +740,10 @@ public class Segoway2 extends Thread {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-	} // END OF BALANCING THREAD CODE
+		System.out.println("Stop the program here.");
+		Delay.msDelay(10000);
+		Button.waitForAnyPress();
+		} // END OF BALANCING THREAD CODE
 		//
 
 	/**
