@@ -77,7 +77,7 @@ public class EV3Way
         //System.out.printf("\t\tStart\n");                                                                                           
         //long lastTimeStep = System.nanoTime();                                                                                  
         //System.out.println("System time is " + System.nanoTime());                                                                                           
-        System.out.println();                                                                                                                                  
+        System.out.println();                                                                                                                                   
         //System.out.println("6/27/2018");                                                                                
         //System.out.println("EV3Way_Paginated_Executable.java   main open");                                                  
         UnregulatedMotor left = new UnregulatedMotor(MotorPort.A);                                                                                                                                                                                      

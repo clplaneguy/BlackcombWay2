@@ -763,7 +763,7 @@ public class Segoway extends Thread
         running = false;                                                                                                                                                             
         //Delay.msDelay(100);                                                                                                                                                                                                                                                                             
         try                                                                                                                                                                          
-            {                                                                                                                                                  
+            {                                                                                                                                                   
 	    if (bw != null)	bw.close();                                                                                                                                       
             }                                                                                                                                       
         catch (IOException ex)                                                                                                                                                          
