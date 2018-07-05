@@ -241,39 +241,35 @@ public class Segoway extends Thread {
 	long freeMemory = Runtime.getRuntime().freeMemory();
 
 	int TestInterval = (int) 1E1; // 10; Did not work
-	// int TestInterval = (int) 1E2; // 100; Stoped at 52 Added close Buffered
-	// Writer
-	// int TestInterval = (int) 1E3; // 1000; Stoped at 972 Added close Buffered
-	// Writer
-	// int TestInterval = (int) 1E4; // 10000; Stoped at 9966 Added close Buffered
-	// Writer
-	// int TestInterval = (int) 1E5; // 100000; Stoped at 15993 of 16043 Added close
-	// Buffered Writer
+	// int TestInterval = (int) 1E2; // 100; Stoped at 52                  Added close Buffered Writer
+	// int TestInterval = (int) 1E3; // 1000; Stoped at 972                Added close Buffered Writer
+	// int TestInterval = (int) 1E4; // 10000; Stoped at 9966              Added close Buffered Writer
+	// int TestInterval = (int) 1E5; // 100000; Stoped at 15993 of 16043   Added close Buffered Writer
 	// int TestInterval = (int) 1E6; // 1000000; Program ended
 
-	double[] TestIntervalA = new double[TestInterval];
-	int[] loopCountA = new int[TestInterval];
-	double[] gyroAngleA = new double[TestInterval];
-	double[] gyroSpeedA = new double[TestInterval];
-	double[] motorPosA = new double[TestInterval];
-	double[] motorSpeedA = new double[TestInterval];
-	double[] gAngleGlobalA = new double[TestInterval];
-	double[] mrcDeltaA = new double[TestInterval];
-	double[] mrcDeltaP1A = new double[TestInterval];
-	double[] mrcDeltaP2A = new double[TestInterval];
-	double[] mrcDeltaP3A = new double[TestInterval];
-	double[] powerA = new double[TestInterval];
-	double[] powerLeftA = new double[TestInterval];
-	double[] powerRightA = new double[TestInterval];
-	double[] mrcLeftA = new double[TestInterval];
-	double[] mrcRightA = new double[TestInterval];
-	double[] tCalcStartA = new double[TestInterval];
-	double[] tIntervalA = new double[TestInterval];
-	double[] tMotorPosOKA = new double[TestInterval];
-	double[] RunTimeMSA = new double[TestInterval];
-	double[] RunTimeSA = new double[TestInterval];
-	double[] motorControlDriveA = new double[TestInterval]; // target speed in degrees per second
-	long[] freeMemoryA = new long[TestInterval];
+	double[] TestIntervalA      = new double[TestInterval] ;
+	int   [] loopCountA         = new    int[TestInterval] ;
+	double[] gyroAngleA         = new double[TestInterval] ;
+	double[] gyroSpeedA         = new double[TestInterval] ;
+	double[] motorPosA          = new double[TestInterval] ;
+	double[] motorSpeedA        = new double[TestInterval] ;
+	double[] gAngleGlobalA      = new double[TestInterval] ;
+	double[] mrcDeltaA          = new double[TestInterval] ;
+	double[] mrcDeltaP1A        = new double[TestInterval] ;
+	double[] mrcDeltaP2A        = new double[TestInterval] ;
+	double[] mrcDeltaP3A        = new double[TestInterval] ;
+	double[] powerA             = new double[TestInterval] ;
+	double[] powerLeftA         = new double[TestInterval] ;
+	double[] powerRightA        = new double[TestInterval] ;
+	double[] mrcLeftA           = new double[TestInterval] ;
+	double[] mrcRightA          = new double[TestInterval] ;
+	double[] tCalcStartA        = new double[TestInterval] ;
+	double[] tIntervalA         = new double[TestInterval] ;
+	double[] tMotorPosOKA       = new double[TestInterval] ;
+	double[] RunTimeMSA         = new double[TestInterval] ;
+	double[] RunTimeSA          = new double[TestInterval] ;
+	double[] motorControlDriveA = new double[TestInterval] ; // target speed in degrees per second
+	  long[] freeMemoryA        = new   long[TestInterval] ;
 
 	/**
 	 * Creates an instance of the Segoway, prompts the user to steady Segoway for
@@ -356,7 +352,7 @@ public class Segoway extends Thread {
 					gMin = g;
 				}
 
-				gSum += g;
+				gSum += g; 
 				try {
 					Thread.sleep(5);
 				} catch (InterruptedException e) {
@@ -517,16 +513,16 @@ public class Segoway extends Thread {
 	 * 
 	 * @return true if the loop is running.
 	 */
-	public static boolean isRunning() { ////////////////
-		return running; //
-	} ////////////////
+	public boolean isRunning() {
+		return running; 
+	}
 
 	/**
 	 * Stop the control loop
 	 */
-	public void halt() { /////////////////
-		running = false; //
-	} /////////////////
+	public void halt() { 
+		running = false; 
+	} 
 
 	// ---------------------------------------------------------------------
 	//
@@ -652,8 +648,8 @@ public class Segoway extends Thread {
 			RunTimeS = RunTimeMS * 1E-3;
 			freeMemory = Runtime.getRuntime().freeMemory();
 
-			// if (Debug)
-			if (false) {
+			 if (Debug) {
+			//if (false) {
 				if (loopCount <= TestInterval) {
 					TestIntervalA[loopCount - 1] = TestInterval;
 					loopCountA[loopCount - 1] = loopCount;

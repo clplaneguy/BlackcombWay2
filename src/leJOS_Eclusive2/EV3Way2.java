@@ -52,7 +52,7 @@ import lejos.utility.Delay;
  */
 // public class SegowayEV3ir {}
 
-public class EV3Way {
+public class EV3Way2 {
 	// static final double WHEEL_SIZE = 4.32;
 	static final double WHEEL_SIZE = 5.6;
 
@@ -88,25 +88,29 @@ public class EV3Way {
 		Port port = LocalEV3.get().getPort("S1");
 		EV3IRSensor ir = new EV3IRSensor(port);
 		// while(Segoway.isRunning())
-		while (Button.ESCAPE.isUp()) {
-			System.out.println("while (Button.ESCAPE.isUp())");
+		 while (true)
+	        {
+	        	System.out.println("while (Button.ESCAPE.isUp())");
 			// Gyro seems to reset from time to time, give it a kick
 			// gyroPort.setMode(1);
 			// waitForPress(startStop);
 			// Button.waitForAnyPress();
+			
 			// Segoway segway = new Segoway(left, right, gyro, WHEEL_SIZE);
-			Thread segway = new Segoway(left, right, gyro, WHEEL_SIZE);// From krchilders
-			segway.setPriority(Thread.MAX_PRIORITY); // From krchilders
-			segway.setDaemon(true); // From krchilders
-			segway.start(); // From krchilders
-			segway.join(); // From krchilders
+
+	        Thread segway = new Segoway(left, right, gyro, WHEEL_SIZE);    // From krchilders
+			segway.setPriority(Thread.MAX_PRIORITY);                       // From krchilders
+			segway.setDaemon(true);                                        // From krchilders
+			segway.start();                                                // From krchilders
+			segway.join();                                                 // From krchilders
 
 			((Segoway) segway).wheelDriver(0, 0);
 			Sound.beep();
-			int speed = 0; 
+			int speed = 0;  
 			int steer = 0;
-			while (Segoway.isRunning()) {
-				// System.out.println("Inside while(Paginated_Executable.isRunning())");
+			while(((Segoway) segway).isRunning()) {
+			//while (isRunning()) {
+					// System.out.println("Inside while(Paginated_Executable.isRunning())");
 				int cmd = ir.getRemoteCommand(0);
 				switch (cmd) {
 				case 1:
@@ -134,7 +138,6 @@ public class EV3Way {
 			// waitForRelease(startStop);
 			// Button.waitForAnyPress();
 		}
-		ir.close();
 	}
 
 }
