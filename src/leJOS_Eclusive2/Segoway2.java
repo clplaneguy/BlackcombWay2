@@ -239,38 +239,42 @@ public class Segoway2 extends Thread {
 	double  KSPEED2 = 0.2;
 	double  KDRIVE2 = 0.2;
 	long    freeMemory = Runtime.getRuntime().freeMemory();
+	float   gyroRaw;                            
+	int     run;
+	
+	// int TestInterval = (int) 1E1;  //       10; Did not work
+	// int TestInterval = (int) 1E2;  //      100; Stoped at 52               Added close Buffered Writer
+	// int TestInterval = (int) 1E3;  //     1000; Stoped at 972              Added close Buffered Writer
+	// int TestInterval = (int) 1E4;  //    10000; Stoped at 9966             Added close Buffered Writer
+	 int TestInterval = (int) 1E5;    //   100000; Stoped at 15993 of 16043   Added close Buffered Writer
+	// int TestInterval = (int) 1E6;  //  1000000; Program ended
 
-	//int TestInterval = (int) 1E1; // 10; Did not work
-	// int TestInterval = (int) 1E2; //      100; Stoped at 52               Added close Buffered Writer
-	// int TestInterval = (int) 1E3; //     1000; Stoped at 972              Added close Buffered Writer
-	// int TestInterval = (int) 1E4; //    10000; Stoped at 9966             Added close Buffered Writer
-	 int TestInterval = (int) 1E5; //   100000; Stoped at 15993 of 16043   Added close Buffered Writer
-	// int TestInterval = (int) 1E6; //  1000000; Program ended
-
-	double[] TestIntervalA      = new double [TestInterval] ;
-	int   [] loopCountA         = new    int [TestInterval] ;
-	double[] gyroAngleA         = new double [TestInterval] ;
-	double[] gyroSpeedA         = new double [TestInterval] ;
-	double[] motorPosA          = new double [TestInterval] ;
-	double[] motorSpeedA        = new double [TestInterval] ;
-	double[] gAngleGlobalA      = new double [TestInterval] ;
-	double[] mrcDeltaA          = new double [TestInterval] ;
-	double[] mrcDeltaP1A        = new double [TestInterval] ;
-	double[] mrcDeltaP2A        = new double [TestInterval] ;
-	double[] mrcDeltaP3A        = new double [TestInterval] ;
-	double[] powerA             = new double [TestInterval] ;
-	double[] powerLeftA         = new double [TestInterval] ;
-	double[] powerRightA        = new double [TestInterval] ;
-	double[] mrcLeftA           = new double [TestInterval] ;
-	double[] mrcRightA          = new double [TestInterval] ;
-	double[] tCalcStartA        = new double [TestInterval] ;
-	double[] tIntervalA         = new double [TestInterval] ;
-	double[] tMotorPosOKA       = new double [TestInterval] ;
-	double[] RunTimeMSA         = new double [TestInterval] ;
-	double[] RunTimeSA          = new double [TestInterval] ;
-	double[] motorControlDriveA = new double [TestInterval] ; // target speed in degrees per second
-	  long[] freeMemoryA        = new   long [TestInterval] ;
-
+	int    [] loopCountA         = new    int [TestInterval] ;
+	long   [] freeMemoryA        = new   long [TestInterval] ;
+	float  [] gyroRawA           = new  float [TestInterval]  ;                          
+	double [] TestIntervalA      = new double [TestInterval] ;
+	double [] gyroAngleA         = new double [TestInterval] ;
+	double [] gyroSpeedA         = new double [TestInterval] ;
+	double [] motorPosA          = new double [TestInterval] ;
+	double [] motorSpeedA        = new double [TestInterval] ;
+	double [] gAngleGlobalA      = new double [TestInterval] ;
+	double [] mrcDeltaA          = new double [TestInterval] ;
+	double [] mrcDeltaP1A        = new double [TestInterval] ;
+	double [] mrcDeltaP2A        = new double [TestInterval] ;
+	double [] mrcDeltaP3A        = new double [TestInterval] ;
+	double [] powerA             = new double [TestInterval] ;
+	double [] powerLeftA         = new double [TestInterval] ;
+	double [] powerRightA        = new double [TestInterval] ;
+	double [] mrcLeftA           = new double [TestInterval] ;
+	double [] mrcRightA          = new double [TestInterval] ;
+	double [] tCalcStartA        = new double [TestInterval] ;
+	double [] tIntervalA         = new double [TestInterval] ;
+	double [] tMotorPosOKA       = new double [TestInterval] ;
+	double [] RunTimeMSA         = new double [TestInterval] ;
+	double [] RunTimeSA          = new double [TestInterval] ;
+	double [] motorControlDriveA = new double [TestInterval] ; // target speed in degrees per second
+	double [] gOffsetA           = new double [TestInterval] ;
+	
 	/**
 	 * Creates an instance of the Segoway, prompts the user to steady Segoway for
 	 * gyro calibration, then begins self-balancing thread. Wheel diameter is used
@@ -294,7 +298,7 @@ public class Segoway2 extends Thread {
 	 *            diameter of wheel, preferably use cm (printed on side of LEGO
 	 *            tires in mm)
 	 */
-	public Segoway2(UnregulatedMotor left, UnregulatedMotor right, EV3GyroSensor ev3Gyro, double wheelDiameter) {
+	public Segoway2(int run, UnregulatedMotor left, UnregulatedMotor right, EV3GyroSensor ev3Gyro, double wheelDiameter) {
 		this.left_motor = left;
 		this.right_motor = right;
 
@@ -333,7 +337,9 @@ public class Segoway2 extends Thread {
 	                                                                                    //  From krchilders                 
 		double gSum;                                                                    //  From krchilders                                         
 		int i, gMin, gMax, g;                                                           //  From krchilders                                           
-	                                                                                    //  From krchilders                                 
+	                                                                                                                                   
+		//ev3Gyro.recalibrateOffset();  The method is undefinded                        //  From gloomandy
+	    
 		do {                                                                            //  From krchilders                                     
 			ev3Gyro.reset();                                                            //  From krchilders
 		                                                                                //  From krchilders
@@ -364,7 +370,7 @@ public class Segoway2 extends Thread {
 	                                                                                    //  From krchilders                                  
 		// Average the sum of the samples.                                              //  From krchilders                    
 		// Used to have +1, which was mainly for stopping Segoway wandering.            //  From krchilders                             
-		gOffset = gSum / 1000;                                                          //  From krchilders           
+		gOffset = gSum / 200 ;                                                          //  From krchilders           
 	                                                                                    //  From krchilders      
 		if (invertGyro) {                                                               //  From krchilders                            
 			gOffset = gOffset * -1;                                                     //  From krchilders                       
@@ -387,40 +393,40 @@ public class Segoway2 extends Thread {
 			} catch (InterruptedException e) {                                                                           
 			}                                                                                                                
 		}                                                                                                            
-		System.out.println("GO");                                                                                      
-		System.out.println();                                                                                       
-	}                                                                                                                 
-                                                                                                                         
-	/**                                                                                                                  
-	 * Get the data from the gyro. Fills the pass by reference gyroSpeed and                                                       
-	 * gyroAngle based on updated information from the Gyro Sensor. Maintains an                                          
-	 * automatically adjusted gyro offset as well as the integrated gyro angle.                                          
-	 *                                                                                                                  
-	 */                                                                                                                        
-	private void updateGyroData() {                                                                                           
-		// NOTE: The GyroSensor class actually rebaselines for drift ever 5 seconds.                                              
-		// This not needed? Or is this method better? Some of this fine tuning may                                                     
-		// actually interfere with fine-tuning happening in the hardcoded dIMU and                                            
-		// GyroScope code. As of EV3 0.8.1-beta drift accounting is still needed.                                       
-		float gyroRaw;                                                                                                     
-		spGyro.fetchSample(gyroSample, 0);                                                                                      
-                                                                                                                        
-		gyroRaw = gyroSample[0]; // deg/s                                                                                      
-                                                                                                                          
-		if (invertGyro) {                                                                                             
-			gyroRaw = (-1 * gyroRaw);                                                                                     
-		}                                                                                                                    
-                                                                                                                              
-		gOffset = EMAOFFSET * gyroRaw + (1 - EMAOFFSET) * gOffset;                                                             
-		gyroSpeed = gyroRaw - gOffset; // Angular velocity (degrees/sec)                                                                                   
-                                                                                                                              
-		gAngleGlobal += gyroSpeed * tInterval;                                                                                      
-		gyroAngle = gAngleGlobal; // Absolute angle (degrees)                                                                                   
-	}                                                                                                                     
-                                                                                                                              
-	/**                     
-	 * Keeps track of wheel position with both motors.
-	 */
+		System.out.println("GO");                                                                                        
+		System.out.println();                                                                                         
+	}                                                                                                                   
+                                                                                                                           
+	/**                                                                                      //  From krchilders                           
+	 * Get the data from the gyro. Fills the pass by reference gyroSpeed and                 //  From krchilders                                      
+	 * gyroAngle based on updated information from the Gyro Sensor. Maintains an             //  From krchilders                              
+	 * automatically adjusted gyro offset as well as the integrated gyro angle.              //  From krchilders                             
+	 *                                                                                       //  From krchilders                            
+	 */                                                                                      //  From krchilders                                     
+	private void updateGyroData() {                                                          //  From krchilders                                                                      
+		// NOTE: The GyroSensor class actually rebaselines for drift ever 5 seconds.         //  From krchilders                   
+		// This not needed? Or is this method better? Some of this fine tuning may           //  From krchilders                                             
+		// actually interfere with fine-tuning happening in the hardcoded dIMU and           //  From krchilders                              
+		// GyroScope code. As of EV3 0.8.1-beta drift accounting is still needed.            //  From krchilders                         
+		//float gyroRaw;                                                                       //  From krchilders                           
+		spGyro.fetchSample(gyroSample, 0);                                                   //  From krchilders                                
+                                                                                             //  From krchilders                          
+		gyroRaw = gyroSample[0]; // deg/s                                                    //  From krchilders                             
+	                                                                                         //  From krchilders                         
+		if (invertGyro) {                                                                    //  From krchilders                       
+			gyroRaw = (-1 * gyroRaw);                                                        //  From krchilders                        
+		}                                                                                    //  From krchilders                             
+	                                                                                         //  From krchilders                                 
+		gOffset = EMAOFFSET * gyroRaw + (1 - EMAOFFSET) * gOffset;                           //  From krchilders                              
+		gyroSpeed = gyroRaw - gOffset; // Angular velocity (degrees/sec)                     //  From krchilders                                                         
+	                                                                                         //  From krchilders                               
+		gAngleGlobal += gyroSpeed * tInterval;                                               //  From krchilders                                    
+		gyroAngle = gAngleGlobal; // Absolute angle (degrees)                                //  From krchilders                                                
+	}                                                                                        //  From krchilders                          
+                                   
+	/**                                                                                     
+	 * Keeps track of wheel position with both motors. 
+	 */ 
 	private void updateMotorData() {
 		long mrcLeft, mrcRight, mrcDelta;
 
@@ -560,7 +566,11 @@ public class Segoway2 extends Thread {
 	// KSPEED * motorSpeed;
 	//
 	public void run() {
-
+		mrcSum      = 0;
+		motorDiff   = 0;
+		mrcDeltaP3  = 0;
+		mrcDeltaP2  = 0;
+		mrcDeltaP1  = 0;
 		running = true;
 		
 		int     loopCount    =  1; // postpone activation of the motors until dt in the loop is stable // From
@@ -654,11 +664,11 @@ public class Segoway2 extends Thread {
 			motorPos -= motorControlDrive * tSmoothedInterval;
 
 			// This is the main balancing equation
-			power = ((KGYROSPEED * gyroSpeed + // Deg/Sec from Gyro sensor
-					KGYROANGLE * gyroAngle) / ratioWheel + // Deg from integral of gyro
-					KPOS * motorPos + // From MotorRotaionCount of both motors
-					KDRIVE * motorControlDrive + // To improve start/stop performance
-					KSPEED * motorSpeed); // Motor speed in Deg/Sec
+			power = (( KGYROSPEED * gyroSpeed +                 // Deg/Sec from Gyro sensor
+					   KGYROANGLE * gyroAngle) / ratioWheel +   // Deg from integral of gyro
+					   KPOS * motorPos +                        // From MotorRotaionCount of both motors
+					   KDRIVE * motorControlDrive +             // To improve start/stop performance
+					   KSPEED * motorSpeed);                    // Motor speed in Deg/Sec
 			smoothPower = 0.7 * smoothPower + 0.3 * power;
 			if (Math.abs(smoothPower) < 100)
 				tMotorPosOK = System.currentTimeMillis();
@@ -709,7 +719,7 @@ public class Segoway2 extends Thread {
 				RunTimeS % 60, AverageMS);
 		try {
 			bw.write(
-					"   loopCount, i, j, loopCountA[j],      gyroAngleA[j],              gyroSpeedA[j],              motorPosA[j],         motorSpeedA[j],     powerA[j], PowerLeftA[j], tIntervalA[j], RunTimeMSA[j], RunTimeSA[j], motorControlDriveA[j], freeMemoryA  ");
+					"  run,  loopCount, i,    j,     loopCountA[j],  tIntervalA[j],  RunTimeMSA[j],  RunTimeSA[j], gyroRawA[j], gOffsetA[j],  gyroAngleA[j], gyroSpeedA[j], motorPosA[j],   mrcDeltaP1,    mrcDeltaP2,    mrcDeltaP3,   motorSpeedA[j],  powerA[j],  powerLeftA[j],  motorControlDriveA[j],       freeMemoryA[j]  ");
 			bw.newLine();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
@@ -721,9 +731,9 @@ public class Segoway2 extends Thread {
 			if (j < TestInterval) {
 				try { 
 					bw.write(String.format(
-							"   %5d,   %10d,  %10d,      %10d,              %10.10f,                        %10.10f,                %10.10f,               %10.10f,             %10.10f ,     %10.10f,       %10.10f,        %10.10f,        %10.10f,          %10.10f,                      %10d        ",                                 
-							  loopCount, i,    j,     loopCountA[j], KGYROANGLE2 * gyroAngleA[j], KGYROSPEED2 * gyroSpeedA[j], KPOS2 * motorPosA[j], KSPEED2 * motorSpeedA[j],  powerA[j],  powerLeftA[j],  tIntervalA[j],  RunTimeMSA[j],  RunTimeSA[j],  motorControlDriveA[j],       freeMemoryA[j]));
-					bw.newLine();
+							" %5d,     %5d,   %10d,  %10d,      %10d,          %10.10f,       %10.10f,       %10.10f,      %10.10f,     %10.10f ,             %10.10f,                   %10.10f,                %10.10f,              %10d,           %10d,          %10d,          %10.10f,             %10.10f,        %10.10f,          %10.10f,                   %10d,         ",                                 
+						      run,  loopCount, i,    j,     loopCountA[j],  tIntervalA[j],  RunTimeMSA[j],  RunTimeSA[j], gyroRawA[j], gOffsetA[j], KGYROANGLE2 * gyroAngleA[j], KGYROSPEED2 * gyroSpeedA[j], KPOS2 * motorPosA[j],   mrcDeltaP1,    mrcDeltaP2,    mrcDeltaP3,   KSPEED2 * motorSpeedA[j],  powerA[j],  powerLeftA[j],  motorControlDriveA[j],       freeMemoryA[j]    ));
+					bw.newLine();                                                                                                                                                                                                                                                                                                                                                                                        
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

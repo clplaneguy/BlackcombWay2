@@ -55,7 +55,7 @@ import lejos.utility.Delay;
 public class EV3Way2 {
 	// static final double WHEEL_SIZE = 4.32;
 	static final double WHEEL_SIZE = 5.6;
-
+	static int run =1;																																															
 	static void waitForPress(Touch t) {
 		while (!t.isPressed())
 			Delay.msDelay(100);
@@ -90,20 +90,21 @@ public class EV3Way2 {
 		// while(Segoway.isRunning())
 		 while (true) 
 	        {
-	        	System.out.println("while (Button.ESCAPE.isUp())");
+	        //System.out.println("while (Button.ESCAPE.isUp())");
 			// Gyro seems to reset from time to time, give it a kick
 			// gyroPort.setMode(1);
 			// waitForPress(startStop);
 			// Button.waitForAnyPress();
 			
 			// Segoway segway = new Segoway(left, right, gyro, WHEEL_SIZE);
-
-	        Thread segway = new Segoway2(left, right, gyro, WHEEL_SIZE);    // From krchilders
+	        System.out.println("run " + run);
+	        //Thread segway = new Segoway2(run, left, right, gyro, WHEEL_SIZE);    // From krchilders
+	        Segoway2 segway = new Segoway2(run, left, right, gyro, WHEEL_SIZE);    // From krchilders
 			segway.setPriority(Thread.MAX_PRIORITY);                        // From krchilders
 			segway.setDaemon(true);                                         // From krchilders
 			segway.start();                                                 // From krchilders
 			segway.join();                                                  // From krchilders
-
+			//segway.run = 1;
 			((Segoway2) segway).wheelDriver(0, 0);
 			Sound.beep();
 			int speed = 0;  
@@ -137,6 +138,7 @@ public class EV3Way2 {
 			}
 			// waitForRelease(startStop);
 			// Button.waitForAnyPress();
+		run++;
 		}
 	}
 
