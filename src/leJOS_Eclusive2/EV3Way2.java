@@ -114,19 +114,19 @@ public class EV3Way2 {
 					// System.out.println("Inside while(Paginated_Executable.isRunning())");
 				int cmd = ir.getRemoteCommand(0);
 				switch (cmd) {
-				case 1:
+				case 1: // Top left: Turn left
 					steer += 5;
 					break;
-				case 3:
+				case 3: // Top right: Turn right
 					steer -= 5;
 					break;
-				case 2:
-					speed -= 5;
-					break;
-				case 4:
+				case 2: // Bottom left: Forward
 					speed += 5;
 					break;
-				case 9:
+				case 4: // Bottom right: Backward
+					speed -= 5;
+					break;
+				case 9: // Top center: Stop
 					speed = 0;
 					steer = 0;
 					break;

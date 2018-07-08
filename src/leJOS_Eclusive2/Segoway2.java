@@ -1,216 +1,209 @@
-package leJOS_Eclusive2; 
-                                         
-//1234567891234567892234567893                                                                               
-//  **************************                                                                             
-//      **********************                                                                        
-//          ******************      Spaces                                                            
-//              **************                                                           
-//                  **********                                                        
-//                      ******                                                    
-//                          **                                                    
-//                              *                                                       
-//1234567891234567892234567893                                                                                
-//	**************************                                                                                                                                                                                                                                      
-//		**********************                                                        
-//			******************      Tab = 4 spaces                                     
-//				**************                                                     
-//					**********                                                                
-//						******                                                               
-//							**                                                                     
-//								*                                                                          
-//1234567891234567892234567893                                                                                             
-//	**********************                                                                          
-//		**************         Tab = 8 spaces                                                   
-//			******                                                        
-//				*                                              
-                                     
-import java.io.BufferedWriter; 
-import java.io.File;                
-import java.io.FileWriter;        
-import java.io.IOException;   
-                                     
-import lejos.hardware.Button;     
-import lejos.hardware.Sound;          
-import lejos.hardware.lcd.LCD;                       
-import lejos.hardware.motor.UnregulatedMotor;    
-import lejos.hardware.sensor.EV3GyroSensor;  
-import lejos.robotics.EncoderMotor;          
-import lejos.robotics.SampleProvider; 
-import lejos.utility.Delay; 
-            
-/* <p>                                                                                                                                                                                                           
- * <li>This class balances a two-wheeled Segway-like robot. It works with almost any construction                                                                                                                  
- * (short or tall) such as the                                                                      
- * <li><a> href="http://www.laurensvalk.com/nxt-2_0-only/anyway">Anyway</a>                              
- * <li>or the                                                                                                
- * <li><a> href="http://www.hitechnic.com/blog/gyro-sensor/htway/"HTWay</a></p>                                 
- *                                                                                                                             
- * <p>Wheel diameter is the most important construction variable, which is specified in the constructor.</p>                                                                                                                                  
- *                                                                                                                                                                                                         
- * <p>To start the robot balancing:                                                                                                                                                                         
- * <li>1. Run the program. You will be prompted to lay it down.                                                                                                                                                                                                                
- * <li>2. Lay it down (orientation doesn't matter). When it detects it is not moving it will automatically calibrate the gyro sensor.                                                                                                                    
- * <li>3. When the beeping begins, stand it up so it is vertically balanced.                                                                                                                                                    
- * <li>4. When the beeping stops, let go and it will begin balancing on its own.</p>                                                                                                                                
- *                                                                                                                                                                                                                   
- * <p>Alternately you can lean the robot against a wall and run the program. After the gyro                                                                                                                                                  
- * calibration, the robot backs up against the wall until it falls forward. When it detects the                                                                                                                                         
- * forward fall, it start the balance loop.</p>                                                                                                                                                                               
- *                                                                                                                                                                                                              
- * <p>NOTE: In order to make the robot move and navigate, use the SegowayPilot class.</p>                                                                                                                                              
- *                                                                                                                                                                                                              
- * <p><i>This code is based on the HTWay by HiTechnic and the programs by BB and gloomyandy.</i></p>                                                                                                              
- *                                                                                                                                                                                                                 
- * @author clplaneguy   123456                                                                                                                                                                                                     
- *                                                                                                                                                                                                                                        
- */                                            
-public class Segoway2 extends Thread { 
-	private Thread t;               
-	private String threadName; 
-	                           
-	// Motors and gyro:                               
-	private EV3GyroSensor ev3Gyro;    
-	private SampleProvider spGyro;     
-	private float[] gyroSample;           
-	private EncoderMotor left_motor; 
-	private EncoderMotor right_motor; 
-                                                                                     
-	// ===================================================================== 
-	// Balancing constants 
-	//                                                            
-	// These are the constants used to maintain balance.                              
-	// ===================================================================== 
-	/**                                                                                    
-	 * Basic wait time used to set variables values. Used to calculate new values 
-	 * that are time dependent.   
-	 */                                                
-	private static final int BASE_WAIT_TIME = 9;           
-	// private static final int BASE_WAIT_TIME = 0; 
-                
-	/**                                                                                     
-	 * Minimum loop time(ms) passed to the Wait command. NOTE: Balance control loop 
-	 * only takes 0.63ms in EV3 leJOS EVJ 0.9.1-beta after 10,000,000 iterations 
-	 */ 
-             
-	//                                                                   
-	// private static final int WAIT_TIME = 9; // originally 8 
-	// private static final int WAIT_TIME = 0; // originally 8  
-	// private static final int WAIT_TIME = 8; // originally 8 
-	private static final int WAIT_TIME = 7; // originally 8 
-                                                                          
-	// These are the main four balance constants, only the gyro           
-	// constants are relative to the wheel size. KPOS and KSPEED         
-	// are self-relative to the wheel size.                                                
-	// private static final double KGYROANGLE = (15*BASE_WAIT_TIME)/WAIT_TIME;       
-	private static final double KGYROANGLE = 15;       
-	private static final double KGYROSPEED = 1.3;       
-                                                   
-	private static final double KPOS = 0.1;            
-	private static final double KSPEED = 0.11; 
- 
-                  	
-  	/**                                                                                        
-	 * This constant aids in drive control. When the robot starts moving because of 
-	 * user control, this constant helps get the robot leaning in the right 
-	 * direction. Similarly, it helps bring robot to a stop when stopping. 
-	 */                                                    
-	private static final double KDRIVE = -0.02; 
-           
-	           
-	/**                                                                                   
-	 * Power differential used for steering based on difference of target steering 
-	 * and actual motor difference. 
-	 */                                                
-	private static final double KSTEER = 0.25; 
- 
-                  	
- 	/**                                                                                    
-	 * Gyro offset control The gyro sensor will drift with time. This constant is         
-	 * used in a simple long term averaging to adjust for this drift. Every time          
-	 * through the loop, the current gyro sensor value is averaged into the gyro 
-	 * offset weighted according to this constant. The value is set to reset the      
-	 * offset over a 5 second period. 
-	 */                                                                                 
-	//private static final double EMAOFFSET = WAIT_TIME / (1000.0 * 5); 
-	private static final double EMAOFFSET = WAIT_TIME / 5000.0; 
-           
-	             
-	/**                                                                                          
-	 * If robot power is saturated (over 100%) for over this time limit(ms) then    
-	 * robot has fallen. 
-	 */                                                                                  
-	// private static final double TIME_FALL_LIMIT = 2000; // originally 1000         
-	// private static final double TIME_FALL_LIMIT = 200000; // originally 1000        
-	// private static final double TIME_FALL_LIMIT = 1E3; // originally 1000      
-	private static final double TIME_FALL_LIMIT = 2E3; // originally 1000 
-                                                                                     
-	// --------------------------------------------------------------------- 
-              
-	          
-	/**                                                                                    
-	 * Maximum speed(degrees/second) Note that position and speed are measured as 
-	 * the sum of the two motors, in other words, 600 would actually be 300 
-	 * degrees/second for each motor. 
-	 */                                                             
-	private static final double CONTROL_SPEED  = 600.0; 
-	private static final int    OFFSET_SAMPLES = 100;   
-	private static final int    MAX_VALUE      = 1000;     
-	 
-	                                                                               
-	// ===================================================================== 
-	// Global variables                                                         
-	// ===================================================================== 
+package leJOS_Eclusive2;                                    
+                                                            
+//1234567891234567892234567893                                                                                    
+//  **************************                                                                              
+//      **********************                                                                         
+//          ******************      Spaces                                                             
+//              **************                                                            
+//                  **********                                                         
+//                      ******                                                     
+//                          **                                                        
+//                              *                                                        
+//1234567891234567892234567893                                                                                 
+//	**************************                                                                                                                                                                                                                                       
+//		**********************                                                         
+//			******************      Tab = 4 spaces                                      
+//				**************                                                      
+//					**********                                                                 
+//						******                                                                
+//							**                                                                      
+//								*                                                                           
+//1234567891234567892234567893                                                                                              
+//	**********************                                                                           
+//		**************         Tab = 8 spaces                                                    
+//			******                                                         
+//				*                                                         
+                                                                               
+import java.io.BufferedWriter;                                                    
+import java.io.File;                                                                
+import java.io.FileWriter;                                                      
+import java.io.IOException;                                                          
+                                                                                              
+import lejos.hardware.Button;                                                                
+import lejos.hardware.Sound;                                                                          
+import lejos.hardware.lcd.LCD;                                                                    
+import lejos.hardware.motor.UnregulatedMotor;                                                      
+import lejos.hardware.sensor.EV3GyroSensor;                                                           
+import lejos.robotics.EncoderMotor;                                                                
+import lejos.robotics.SampleProvider;                                                                
+import lejos.utility.Delay;                                                                         
+                                                                                                       
+/* <p>                                                                                                                                                                                                                        
+ * <li>This class balances a two-wheeled Segway-like robot. It works with almost any construction                                                                                                                           
+ * (short or tall) such as the                                                                                 
+ * <li><a> href="http://www.laurensvalk.com/nxt-2_0-only/anyway">Anyway</a>                                      
+ * <li>or the                                                                                                        
+ * <li><a> href="http://www.hitechnic.com/blog/gyro-sensor/htway/"HTWay</a></p>                                       
+ *                                                                                                                              
+ * <p>Wheel diameter is the most important construction variable, which is specified in the constructor.</p>                                                                                                                                   
+ *                                                                                                                                                                                                           
+ * <p>To start the robot balancing:                                                                                                                                                                                         
+ * <li>1. Run the program. You will be prompted to lay it down.                                                                                                                                                                                                                  
+ * <li>2. Lay it down (orientation doesn't matter). When it detects it is not moving it will automatically calibrate the gyro sensor.                                                                                                                      
+ * <li>3. When the beeping begins, stand it up so it is vertically balanced.                                                                                                                                                        
+ * <li>4. When the beeping stops, let go and it will begin balancing on its own.</p>                                                                                                                                 
+ *                                                                                                                                                                                                                               
+ * <p>Alternately you can lean the robot against a wall and run the program. After the gyro                                                                                                                                                        
+ * calibration, the robot backs up against the wall until it falls forward. When it detects the                                                                                                                                          
+ * forward fall, it start the balance loop.</p>                                                                                                                                                                                
+ *                                                                                                                                                                                                               
+ * <p>NOTE: In order to make the robot move and navigate, use the SegowayPilot class.</p>                                                                                                                                               
+ *                                                                                                                                                                                                               
+ * <p><i>This code is based on the HTWay by HiTechnic and the programs by BB and gloomyandy.</i></p>                                                                                                               
+ *                                                                                                                                                                                                                  
+ * @author clplaneguy   123456                                                                                                                                                                                                                                                               
+ *                                                                                                                                                                                                                                                             
+ */                                                                                                              
+public class Segoway2 extends Thread {                                                                               
+	private Thread t;                                                                                        
+	private String threadName;                                                                            
+	                                                                                                                    
+	// Motors and gyro:                                                                                            
+	private EV3GyroSensor ev3Gyro;                                                                            
+	private SampleProvider spGyro;                                                                                
+	private float[] gyroSample;                                                                                       
+	private EncoderMotor left_motor;                                                                                 
+	private EncoderMotor right_motor;                                                                            
+                                                                                                                     
+	// =====================================================================                                              
+	// Balancing constants                                                                                  
+	//                                                                                                                       
+	// These are the constants used to maintain balance.                                                                                            
+	// =====================================================================                                                        
+	/**                                                                                                           
+	 * Basic wait time used to set variables values. Used to calculate new values                                     
+	 * that are time dependent.                                                                     
+	 */                                                                                              
+	private static final int BASE_WAIT_TIME = 9;                                                
+	                                                                                       
+	/**                                                                                                                   
+	 * Minimum loop time(ms) passed to the Wait command. NOTE: Balance control loop                                    
+	 * only takes 0.63ms in EV3 leJOS EVJ 0.9.1-beta after 10,000,000 iterations                                      
+	 */                                                                                                                                                                                                                                                                                                                                                                         
+	private static final int WAIT_TIME = 7;                                                                                   
+                                                                                                                    
+	// These are the main four balance constants, only the gyro                                                
+	// constants are relative to the wheel size. KPOS and KSPEED                                                    
+	// are self-relative to the wheel size.                                                                                                    
+	private static final double KGYROANGLE = 15;                                                                 
+	private static final double KGYROSPEED = 1.3;                                                                
+    private static final double KPOS       = 0.1;                                                                 
+	private static final double KSPEED     = 0.11;                                                          
+                                                                                                           
+                  	                                                               
+  	/**                                                                                                         
+	 * This constant aids in drive control. When the robot starts moving because of                                     
+	 * user control, this constant helps get the robot leaning in the right                                       
+	 * direction. Similarly, it helps bring robot to a stop when stopping.                                          
+	 */                                                                                                                
+	private static final double KDRIVE = -0.02;                                                                      
+                                                                                                                      
+	                                                                                                        
+	/**                                                                                                                                                                                  
+	 * Power differential used for steering based on difference of target steering                               
+	 * and actual motor difference.                                                                                     
+	 */                                                                                                                 
+	private static final double KSTEER = 0.25;                                                                           
+                                                                                                                        
+                  	                                                                                                       
+ 	/**                                                                                                                  
+	 * Gyro offset control The gyro sensor will drift with time. This constant is                                     
+	 * used in a simple long term averaging to adjust for this drift. Every time                                        
+	 * through the loop, the current gyro sensor value is averaged into the gyro                                         
+	 * offset weighted according to this constant. The value is set to reset the                                          
+	 * offset over a 5 second period.                                                                                      
+	 */                                                                                                                  
+	//private static final double EMAOFFSET = WAIT_TIME / (1000.0 * 5);                                                  
+	private static final double EMAOFFSET = WAIT_TIME / 5000.0;                                                              
+                                                
+	                                   
+	/**                                                                                                            
+	 * If robot power is saturated (over 100%) for over this time limit(ms) then                      
+	 * robot has fallen.                  
+	 */                                                                                                                               
+	private static final double TIME_FALL_LIMIT = 500; // originally 1000
+    // private static final double TIME_FALL_LIMIT = 2000; // originally 1000          
+	// private static final double TIME_FALL_LIMIT = 200000; // originally 1000         
+	// private static final double TIME_FALL_LIMIT = 1E3; // originally 1000       
+	//private static final double TIME_FALL_LIMIT = 2E3; // originally 1000             
+                                                                                      
+	// ---------------------------------------------------------------------             
+                                        
+	                                        
+	/**                                                                                                                                  
+	 * Maximum speed(degrees/second) Note that position and speed are measured as  
+	 * the sum of the two motors, in other words, 600 would actually be 300               
+	 * degrees/second for each motor.                               
+	 */                                                                                          
+	private static final double CONTROL_SPEED  = 600.0;                                
+	private static final int    OFFSET_SAMPLES = 100;                                 
+	private static final int    MAX_VALUE      = 1000;                                  
+	                                                                              
+	                                                                                     
+	// =====================================================================                
+	// Global variables                                                                          
+	// =====================================================================                      
+                                                                                                       
+	// These two xxControlDrive variables are used to control the movement of the                                        
+	// robot. Both                                                                       
+	// are in degrees/second:                                                             
+	/**                                                                                       
+	 * Target speed(degrees per second) for the sum of the two motors.                       
+	 */                                                                                    
+	private double motorControlDrive = 0.0;                                                
                                                                                             
-	// These two xxControlDrive variables are used to control the movement of the 
-	// robot. Both             
-	// are in degrees/second:      
-	/**                                                                        
-	 * Target speed(degrees per second) for the sum of the two motors. 
-	 */                                               
-	private double motorControlDrive = 0.0; 
- 
-                  	
-	/**                                                                          
-	 * Target change in difference(degrees per second) for two motors. 
-	 */                                              
-	private double motorControlSteer = 0.0; 
- 
-                   	
-	/**                                                                                     
-	 * This global contains the target motor differential, essentially, which way 
-	 * the robot should be pointing. This value is updated every time through the 
-	 * balance loop based on motorControlSteer. 
-	 */                                             
-	private double motorDiffTarget = 0.0; 
- 
-                  	
-	/**                                                                         
-	 * Time robot first starts to balance. Used to calculate tInterval. 
-	 */                                
-	private long tCalcStart; 
- 
-              	
-	/**                                                              
-	 * Time(seconds) for each iteration of the balance loop. 
-	 */                                
-	private double tInterval; 
- 
-                	
-	/**                                          
-	 * Smoothed version of tInterval 
-	 */                                   
-	double tSmoothedInterval; 
- 
-                   	
-	/**                                                                                
-	 * Relative wheel size compared to a standard NXT 1.0 wheel.                       
-	 */                               
-	private double ratioWheel; 
- 
-                             	
-	// Gyro globals                  
-	private double gOffset;                    
-	private double gyroSpeed, gyroAngle; 
+                  	                                                                       
+	/**                                                                                            
+	 * Target change in difference(degrees per second) for two motors.                           
+	 */                                                                                      
+	private double motorControlSteer = 0.0;                                                       
+                                                                                                    
+                   	                                                                               
+	/**                                                                                                 
+	 * This global contains the target motor differential, essentially, which way                      
+	 * the robot should be pointing. This value is updated every time through the                      
+	 * balance loop based on motorControlSteer.                                                      
+	 */                                                                                              
+	private double motorDiffTarget = 0.0;                                                             
+                                                                                                   
+                  	                                                                                  
+	/**                                                                                               
+	 * Time robot first starts to balance. Used to calculate tInterval.                              
+	 */                                                                                         
+	private long tCalcStart;                                                                    
+                                                                                                
+              	                                                                                  
+	/**                                                                                       
+	 * Time(seconds) for each iteration of the balance loop.                                 
+	 */                                                                                           
+	private double tInterval;                                                                    
+                                                                                                   
+                	                                                                                 
+	/**                                                                                                
+	 * Smoothed version of tInterval                                                              
+	 */                                                                                               
+	double tSmoothedInterval;                                                                         
+                                                                                                     
+                   	                                                                                  
+	/**                                                                                                      
+	 * Relative wheel size compared to a standard NXT 1.0 wheel.                                      
+	 */                                                                                                             
+	private double ratioWheel;                                                  
+                                                                                      
+                             	                                                          
+	// Gyro globals                                                                                   
+	//private double gOffset;                                                                 
+	private double gyroSpeed, gyroAngle;                                                       
 	private double gAngleGlobal;                   
 	private boolean invertGyro = true; 
  
@@ -260,11 +253,12 @@ public class Segoway2 extends Thread {
 	long    freeMemory = Runtime.getRuntime().freeMemory();    
 	float   gyroRaw;                                      
 	int     run;          
-	                                                                      
-	// int TestInterval = (int) 1E1;  //       10; Did not work                                                        
+	double offset = 0.0f;                    
+                                                                          
+	 int TestInterval = (int) 1E1;  //       10; Did not work                                                        
 	// int TestInterval = (int) 1E2;  //      100; Stoped at 52               Added close Buffered Writer         
 	// int TestInterval = (int) 1E3;  //     1000; Stoped at 972              Added close Buffered Writer 
-	 int TestInterval = (int) 1E4;  //    10000; Stoped at 9966             Added close Buffered Writer           
+	// int TestInterval = (int) 1E4;  //    10000; Stoped at 9966             Added close Buffered Writer           
 	//int TestInterval = (int) 1E5;    //   100000; Stoped at 15993 of 16043   Added close Buffered Writer 
 	// int TestInterval = (int) 1E6;  //  1000000; Program ended   
                                                                               
@@ -344,63 +338,16 @@ public class Segoway2 extends Thread {
 	 * larger than one (1), it rejects the data and gets another set of samples.        //  From krchilders                              
 	 */                                                                                 //  From krchilders                           
 	private void calibrateGyro() {                                                      //  From krchilders                             
-		System.out.println();                                                                                   
-		System.out.println();                                                                               
-		System.out.println();                                                                                  
-		System.out.println();                                                                                  
-		System.out.println();                                                                                  
-		System.out.println();                                                                                 
 		LCD.clear();                                                                    //  From krchilders                          
-		LCD.drawString("EV3 Segoway", 0, 0);                                            //  From krchilders                         
-		LCD.drawString("Steady robot", 0, 2);                                           //  From krchilders             
-		LCD.drawString("to calibrate", 0, 3);                                           //  From krchilders                   
-		LCD.drawString("the gyro", 0, 4);                                               //  From krchilders      
+		LCD.drawString("EV3 Segoway" , 0, 0);                                                              
+		LCD.drawString("Steady robot", 0, 2);                                                    
+		LCD.drawString("to calibrate", 0, 3);                                                          
+		LCD.drawString("the gyro"    , 0, 4);                                            
 	                                                                                    //  From krchilders                  
-		double gSum;                                                                    //  From krchilders                                          
-		int i, g;                                                                       //  From krchilders                                            
-		float gMax;                  
-		float gMin; 
-	                                                                                                                                                                                                                                           
-		//ev3Gyro.recalibrateOffset();  NXT command, The method is undefined leJOS 0.9.1//  From gloomandy 
-	                                                                                                                  
-		do {                                                                            //  From krchilders                                      
-			ev3Gyro.reset();                                                            //  From krchilders  
-		                                                                                //  From krchilders 
-			gSum = 0.0;                                                                 //  From krchilders                                                     
-			gMin = 1000;                                                                //  From krchilders                                     
-			gMax = -1000;                                                               //  From krchilders                    
-		                                                                                //  From krchilders 
-			for (i = 1; i <= 200; i++) {                                                //  From krchilders                                           
-				spGyro.fetchSample(gyroSample, 0);                                      //  From krchilders                                                 
-				g = (int) gyroSample[0];                                                //  From krchilders                                           
-			                                                                            //  From krchilders   
-				if (g > gMax) {                                                         //  From krchilders                          
-					gMax = g;                                                           //  From krchilders                     
-				}                                                                       //  From krchilders              
-				if (g < gMin) {                                                         //  From krchilders               
-					gMin = g;                                                           //  From krchilders                        
-				}                                                                       //  From krchilders                               
-			                                                                            //  From krchilders         
-				gSum += g;                                                              //  From krchilders                   
-				try {                                                                   //  From krchilders                                     
-					Thread.sleep(5);                                                    //  From krchilders                                           
-				} catch (InterruptedException e) {                                      //  From krchilders                                                                      
-					// Ignore                                                           //  From krchilders                                                        
-				}                                                                       //  From krchilders                                                             
-			}                                                                           //  From krchilders                                     
-		                                                                                //  From krchilders                                   
-		} while ((gMax - gMin) > 1); // Reject and sample again if range too large      //  From krchilders                              
-	                                                                                    //  From krchilders                                   
-		// Average the sum of the samples.                                              //  From krchilders                     
-		// Used to have +1, which was mainly for stopping Segoway wandering.            //  From krchilders                              
-		gOffset = gSum / 200 ;                                                          //  From krchilders             
-	                                                                                    //  From krchilders       
-		                                                                                                               
-		{                                                                                //  From Andy                                      
-	        float offset = 0.0f;                                                         //  From Andy                         
-	        //double gSum;                                                               //  From Andy                       
-	        //float gMin;                                                                //  From Andy                    
-	        //float gMax;                                                                //  From Andy              
+		double gSum;                                                               //  From Andy                       
+	    float gMin;                                                                //  From Andy                    
+	    float gMax;                                                                //  From Andy              
+	    int g;
 	        do {                                                                         //  From Andy                    
 	            gSum = 0.0;                                                              //  From Andy                     
 	            gMin =  Float.MAX_VALUE;                                                 //  From Andy                     
@@ -410,24 +357,16 @@ public class Segoway2 extends Thread {
 	                //float g = getAngularVelocity();                                    //  From Andy                                
 	                spGyro.fetchSample(gyroSample, 0);                                   //  From krchilders                                                 
 					g = (int) gyroSample[0];                                             //  From krchilders                                           
-				    if (g > gMax)                                                        //  From Andy                               
-	                    gMax = g;                                                        //  From Andy                             
-	                if (g < gMin)                                                        //  From Andy                             
-	                    gMin = g;                                                        //  From Andy                            
-                                                                                         //  From Andy                             
-	                gSum += g;                                                           //  From Andy                           
+				    if (g > gMax) gMax = g;                
+	                if (g < gMin) gMin = g;                 
+                    gSum += g;                                                           //  From Andy                           
 	                Delay.msDelay(5);                                                    //  From Andy                            
 	            }                                                                        //  From Andy                               
-	            //System.out.println("Gyro Calibrate min " + gMin + " max " + gMax);     //  From Andy                               
 	        } while ((gMax - gMin) > 5);   // Reject and sample again if range too large //  From Andy                                   
                                                                                          //  From Andy                              
 	        //Average the sum of the samples.                                            //  From Andy                                          
-	        offset = (float)(gSum / OFFSET_SAMPLES); // TODO: Used to have +1, which was mainly for stopping Segway wandering.                   
-	    }                                                                                //   From Andy 
-		                                                                                                               
-		if (invertGyro) {                                                               //  From krchilders                                                 
-			gOffset = gOffset * -1;                                                     //  From krchilders                                  
-		}                                                                               //  From krchilders                       
+	        offset = (float)(gSum / OFFSET_SAMPLES); // TODO: Used to have +1, which was mainly for stopping Segway wandering.                                                                                                               
+		if (invertGyro) offset = -offset;                          
 	  }                                                                                                     
           
 	           
@@ -468,13 +407,12 @@ public class Segoway2 extends Thread {
                                                                                              //  From krchilders                           
 		gyroRaw = gyroSample[0]; // deg/s                                                    //  From krchilders                              
 	                                                                                         //  From krchilders                          
-		if (invertGyro) {                                                                    //  From krchilders                        
-			gyroRaw = (-1 * gyroRaw);                                                        //  From krchilders                         
-		}                                                                                    //  From krchilders                              
+		if (invertGyro) gyroRaw = -gyroRaw;                           
 	                                                                                         //  From krchilders                                  
 		//gOffset = EMAOFFSET * gyroRaw + (1 - EMAOFFSET) * gOffset;                         //  From krchilders                               
-		gOffset = EMAOFFSET * gyroRaw + (1 - EMAOFFSET) * gOffset;                           //  From krchilders                               
-		gyroSpeed = gyroRaw - gOffset; // Angular velocity (degrees/sec)                     //  From krchilders                                                          
+		//offset = EMAOFFSET * gyroRaw + (1 - EMAOFFSET) * offset;                          
+		offset = 0.99999*offset + 0.00001*gyroRaw;                          
+		gyroSpeed = gyroRaw - offset; // Angular velocity (degrees/sec)                                                
 	                                                                                         //  From krchilders                                
 		gAngleGlobal += gyroSpeed * tInterval;                                               //  From krchilders                                     
 		gyroAngle = gAngleGlobal; // Absolute angle (degrees)                                //  From krchilders                                                 
@@ -695,6 +633,7 @@ public class Segoway2 extends Thread {
 		mrcDeltaP2  = 0; 
 		mrcDeltaP1  = 0; 
 		running = true;          
+		//Delay.msDelay(1000);                                                               
 		while (running) {         
 			 //if (false) {     
 		     if (Debug) {    ////////////////////////////////////////////////////////////////////                                                                                      
@@ -761,8 +700,8 @@ public class Segoway2 extends Thread {
       
 		                   	
                                            
-			if (RunTimeS % 20 < 1)                  
-				System.out.println(fatigue);      
+			//if (RunTimeS % 20 < 1)                  
+				//System.out.println(fatigue);      
 			if (fatigue > TIME_FALL_LIMIT)       
 				running = false;    
 			Delay.msDelay(1);                                                               
@@ -821,7 +760,7 @@ public class Segoway2 extends Thread {
 		} catch (IOException ex) { 
 			ex.printStackTrace(); 
 		}                                                    
-		System.out.println("Stop the program here."); 
+		//System.out.println("Stop the program here."); 
 		//Delay.msDelay(10000);             
 		//Button.waitForAnyPress();              
 		} // END OF BALANCING THREAD CODE 
