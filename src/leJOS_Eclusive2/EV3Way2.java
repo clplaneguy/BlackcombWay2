@@ -99,11 +99,11 @@ public class EV3Way2 {
 			// Segoway segway = new Segoway(left, right, gyro, WHEEL_SIZE);
 	        System.out.println("run " + run);
 	        //Thread segway = new Segoway2(run, left, right, gyro, WHEEL_SIZE);    // From krchilders
-	        Segoway2 segway = new Segoway2(run, left, right, gyro, WHEEL_SIZE);    // From krchilders
-			segway.setPriority(Thread.MAX_PRIORITY);                        // From krchilders
-			segway.setDaemon(true);                                         // From krchilders
-			segway.start();                                                 // From krchilders
-			segway.join();                                                  // From krchilders
+	        Segoway2 segway = new Segoway2(run, left, right, gyro, WHEEL_SIZE); 
+			segway.setPriority(Thread.MAX_PRIORITY);                               // From krchilders
+			//segway.setDaemon(true);                                                // From krchilders
+			segway.start();                                                        // From krchilders
+			//segway.join();                                                         // From krchilders
 			//segway.run = 1;
 			((Segoway2) segway).wheelDriver(0, 0);
 			Sound.beep();
