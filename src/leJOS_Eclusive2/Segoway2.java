@@ -409,9 +409,14 @@ public class Segoway2 extends Thread {
 	                                                                                         //  From krchilders                          
 		if (invertGyro) gyroRaw = -gyroRaw;                           
 	                                                                                         //  From krchilders                                  
-		//gOffset = EMAOFFSET * gyroRaw + (1 - EMAOFFSET) * gOffset;                         //  From krchilders                               
-		//offset = EMAOFFSET * gyroRaw + (1 - EMAOFFSET) * offset;                          
-		offset = 0.99999*offset + 0.00001*gyroRaw;                          
+		//gOffset = EMAOFFSET * gyroRaw        +   (1 - EMAOFFSET) * gOffset;                                             
+		// offset = EMAOFFSET * gyroRaw        +   (1 - EMAOFFSET) * offset;                          
+		// offset = (1 - EMAOFFSET) * offset   +   EMAOFFSET * gyroRaw;                          
+		//EMAOFFSET = 0.0014;                                                                             
+		// offset = 0.0014 * gyroRaw           +   (1 - 0.0014) * offset;                          
+		// offset = (1 - 0.0014) * offset      +   0.0014 * gyroRaw;                          
+		// offset = 0.9986 * offset            +   0.0014 * gyroRaw;                          
+		offset = 0.99999*offset                +   0.00001*gyroRaw;                          
 		gyroSpeed = gyroRaw - offset; // Angular velocity (degrees/sec)                                                
 	                                                                                         //  From krchilders                                
 		gAngleGlobal += gyroSpeed * tInterval;                                               //  From krchilders                                     
