@@ -97,7 +97,7 @@ public class EV3Way2 {
 			// Button.waitForAnyPress();
 			
 			// Segoway segway = new Segoway(left, right, gyro, WHEEL_SIZE);
-	        System.out.println("run " + run);
+	        //System.out.println("run " + run);
 	        //Thread segway = new Segoway2(run, left, right, gyro, WHEEL_SIZE);    // From krchilders
 	        Segoway2 segway = new Segoway2(run, left, right, gyro, WHEEL_SIZE); 
 			segway.setPriority(Thread.MAX_PRIORITY);                               // From krchilders

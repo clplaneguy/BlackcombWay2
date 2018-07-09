@@ -95,11 +95,16 @@ public class Segoway2 extends Thread {
 	// These are the main four balance constants, only the gyro                                                
 	// constants are relative to the wheel size. KPOS and KSPEED                                                    
 	// are self-relative to the wheel size.                                                                                                    
-	private static final double KGYROANGLE = 15;                                                                 
+	//private static final double KGYROANGLE = 15;                                                                 
+	private static final double KGYROANGLE = 16;                                                                 
 	private static final double KGYROSPEED = 1.3;                                                                
-    private static final double KPOS       = 0.1;                                                                 
-	private static final double KSPEED     = 0.11;                                                          
-                                                                                                           
+    //private static final double KPOS       = 0.1;                                                                 
+	private static final double KPOS       = 0.2;                                                                 
+	//private static final double KSPEED     = 0.11;                                                          
+	//private static final double KSPEED     = 0.2;                                                          
+	//private static final double KSPEED     = 0.15;                                                          
+	private static final double KSPEED     = 0.12;                                                          
+    //KGYROANGLE = 16;   KGYROSPEED = 1.3;     KPOS       = 0.2;  KSPEED     = 0.12;                                                                                              
                   	                                                               
   	/**                                                                                                         
 	 * This constant aids in drive control. When the robot starts moving because of                                     
@@ -131,11 +136,12 @@ public class Segoway2 extends Thread {
 	 * If robot power is saturated (over 100%) for over this time limit(ms) then                      
 	 * robot has fallen.                  
 	 */                                                                                                                               
-	private static final double TIME_FALL_LIMIT = 500; // originally 1000
-    // private static final double TIME_FALL_LIMIT = 2000; // originally 1000          
-	// private static final double TIME_FALL_LIMIT = 200000; // originally 1000         
-	// private static final double TIME_FALL_LIMIT = 1E3; // originally 1000       
-	//private static final double TIME_FALL_LIMIT = 2E3; // originally 1000             
+	//private static final double TIME_FALL_LIMIT  = 700; // originally 1000
+    // private static final double TIME_FALL_LIMIT = 2000;      
+	// private static final double TIME_FALL_LIMIT = 200000; 
+	// private static final double TIME_FALL_LIMIT = 1E3;   
+	//private static final double TIME_FALL_LIMIT    = 2E3;       
+	private static final double TIME_FALL_LIMIT    = 1E3;       
                                                                                       
 	// ---------------------------------------------------------------------             
                                         
@@ -254,7 +260,9 @@ public class Segoway2 extends Thread {
 	float   gyroRaw;                                      
 	int     run;          
 	double offset = 0.0f;                    
-                                                                          
+	double smoothmtrSpeed = 0;
+	double SmoothDelta = 0;
+	                                                                      
 	 int TestInterval = (int) 1E1;  //       10; Did not work                                                        
 	// int TestInterval = (int) 1E2;  //      100; Stoped at 52               Added close Buffered Writer         
 	// int TestInterval = (int) 1E3;  //     1000; Stoped at 972              Added close Buffered Writer 
@@ -362,10 +370,12 @@ public class Segoway2 extends Thread {
                     gSum += g;                                                           //  From Andy                           
 	                Delay.msDelay(5);                                                    //  From Andy                            
 	            }                                                                        //  From Andy                               
-	        } while ((gMax - gMin) > 5);   // Reject and sample again if range too large //  From Andy                                   
+	        //} while ((gMax - gMin) > 5);   // Reject and sample again if range too large //  From Andy                                   
+	        //} while ((gMax - gMin) > 4);   // Reject and sample again if range too large                                   
+	        } while ((gMax - gMin) > 3);   // Reject and sample again if range too large                                   
                                                                                          //  From Andy                              
 	        //Average the sum of the samples.                                            //  From Andy                                          
-	        offset = (float)(gSum / OFFSET_SAMPLES); // TODO: Used to have +1, which was mainly for stopping Segway wandering.                                                                                                               
+	        offset = (float)(gSum / OFFSET_SAMPLES) + 1; // TODO: Used to have +1, which was mainly for stopping Segway wandering.                                                                                                               
 		if (invertGyro) offset = -offset;                          
 	  }                                                                                                     
           
@@ -375,19 +385,19 @@ public class Segoway2 extends Thread {
 	 */                                                                                                                        
 	private void startBeeps() {                                                                                                                                             
                                                                                                               
-		System.out.println("Balance in");                                                                              
+		//System.out.println("Balance in");                                                                              
                                                                                                                      
 		// Play warning beep sequence to indicate balance about to start                                                     
 		for (int c = 5; c > 0; c--) {                                                                                                 
-			System.out.print(c + " ");                                                                                 
+			//System.out.print(c + " ");                                                                                 
 			Sound.playTone(440, 100);                                                                                    
 			try {                                                                                                     
 				Thread.sleep(1000);                                                                                      
 			} catch (InterruptedException e) {                                                                            
 			}                                                                                                                 
 		}                                                                                                             
-		System.out.println("GO");                                                                                         
-		System.out.println();                                                                                          
+		//System.out.println("GO");                                                                                         
+		//System.out.println();                                                                                          
 	}                                                                                                                    
          
                                                                                                                                                                                                                                           
@@ -410,17 +420,18 @@ public class Segoway2 extends Thread {
 		if (invertGyro) gyroRaw = -gyroRaw;                           
 	                                                                                         //  From krchilders                                  
 		//gOffset = EMAOFFSET * gyroRaw        +   (1 - EMAOFFSET) * gOffset;                                             
-		// offset = EMAOFFSET * gyroRaw        +   (1 - EMAOFFSET) * offset;                          
+		 offset = EMAOFFSET * gyroRaw        +   (1 - EMAOFFSET) * offset;                          
 		// offset = (1 - EMAOFFSET) * offset   +   EMAOFFSET * gyroRaw;                          
 		//EMAOFFSET = 0.0014;                                                                             
 		// offset = 0.0014 * gyroRaw           +   (1 - 0.0014) * offset;                          
 		// offset = (1 - 0.0014) * offset      +   0.0014 * gyroRaw;                          
 		// offset = 0.9986 * offset            +   0.0014 * gyroRaw;                          
-		offset = 0.99999*offset                +   0.00001*gyroRaw;                          
+		// offset = 0.99999*offset             +   0.00001*gyroRaw;                          
+		 
 		gyroSpeed = gyroRaw - offset; // Angular velocity (degrees/sec)                                                
 	                                                                                         //  From krchilders                                
-		gAngleGlobal += gyroSpeed * tInterval;                                               //  From krchilders                                     
-		gyroAngle = gAngleGlobal; // Absolute angle (degrees)                                //  From krchilders                                                 
+		gAngleGlobal +=  gyroSpeed * tInterval;                                                                               
+		gyroAngle     =  gAngleGlobal;            // Absolute angle (degrees)                                                                                
 	}                                                                                        //  From krchilders                            
                
 	             
@@ -443,11 +454,17 @@ public class Segoway2 extends Thread {
 		// mrcDetla is the change int sum of the motor encoders, update 
 		// motorPos based on this detla 
 		mrcDelta = mrcSum - mrcSumPrev; 
-		motorPos += mrcDelta; 
+		//SmoothDelta = 0.75 * SmoothDelta  +  0.25 * mrcDelta;
+		//SmoothDelta = 0.8 * SmoothDelta  +  0.2 * mrcDelta;
+		SmoothDelta = 0.75 * SmoothDelta  +  0.25 * mrcDelta;
+		//motorPos += mrcDelta; 
+		motorPos += SmoothDelta; 
                                                                                     
 		// motorSpeed is based on the average of the last four delta's.                                      
-		motorSpeed = (mrcDelta + mrcDeltaP1 + mrcDeltaP2 + mrcDeltaP3) / (4 * tSmoothedInterval); 
-                                                                                        
+		//motorSpeed = (mrcDelta + mrcDeltaP1 + mrcDeltaP2 + mrcDeltaP3) / (4 * tSmoothedInterval); 
+		motorSpeed = SmoothDelta / tSmoothedInterval; 
+        //smoothmtrSpeed = 0.75 * smoothmtrSpeed  +  0.25 * motorSpeed;
+		
 		// Shift the latest mrcDelta into the previous three saved delta values 
 		mrcDeltaP3 = mrcDeltaP2; 
 		mrcDeltaP2 = mrcDeltaP1; 
@@ -473,20 +490,16 @@ public class Segoway2 extends Thread {
                                                                            
 		// Apply the power steering value with the main power value to 
 		// get the left and right power values. 
-		powerLeft = power + powerSteer;          
+		powerLeft  = power + powerSteer;          
 		powerRight = power - powerSteer;                       
                                                                    
 		// Limit the power to motor power range -100 to 100 
-		if (powerLeft > 100) 
-			powerLeft = 100; 
-		if (powerLeft < -100) 
-			powerLeft = -100; 
+		if (powerLeft >  100) powerLeft =  100; 
+		if (powerLeft < -100) powerLeft = -100; 
                                                                       
 		// Limit the power to motor power range -100 to 100 
-		if (powerRight > 100) 
-			powerRight = 100; 
-		if (powerRight < -100) 
-			powerRight = -100; 
+		if (powerRight >  100) powerRight =  100; 
+		if (powerRight < -100) powerRight = -100; 
 	} 
  
                   	
@@ -509,7 +522,8 @@ public class Segoway2 extends Thread {
 			// use for interval time.                      
 			long tNew = System.currentTimeMillis();      
 			tInterval = (tNew - tCalcStart) / 1000.0;                                
-			tSmoothedInterval = 0.75 * tSmoothedInterval + 0.25 * tInterval; 
+			//tSmoothedInterval = 0.75 * tSmoothedInterval + 0.25 * tInterval; 
+			tSmoothedInterval = 0.7 * tSmoothedInterval + 0.3 * tInterval; 
 			tCalcStart = tNew; 
 		} 
              
@@ -585,7 +599,16 @@ public class Segoway2 extends Thread {
 		long    cLoop        =  0;                                       
 		long    StartTime    =  System.currentTimeMillis(); // 1E9 
 		long    tMotorPosOK  =  System.currentTimeMillis(); 
-                    
+		double KGYROANGLE2;            
+		double KGYROSPEED2;
+		double KPOS2;
+		double KSPEED2;
+		
+		//KGYROANGLE = 16;   KGYROSPEED = 1.3;     KPOS       = 0.2;  KSPEED     = 0.12;                                                                                              
+		//KGYROANGLE2 = KGYROANGLE;   KGYROSPEED2 = KGYROSPEED;     KPOS2 = KPOS;  KSPEED2 = KSPEED;                                                                                              
+		//KGYROANGLE2 = 16;   KGYROSPEED2 = 1.3;     KPOS2 = 0.2;  KSPEED2 = 0.12;                                                                                              
+		KGYROANGLE2 = 17;   KGYROSPEED2 = 1.3;     KPOS2 = 0.2;  KSPEED2 = 0.12;                                                                                              
+	    
 		try {                                                  
 			// Specify the file name and path here 
 			File file = new File("myfile.txt"); 
@@ -598,14 +621,14 @@ public class Segoway2 extends Thread {
 			}                                          
 			FileWriter fw = new FileWriter(file); 
 			bw = new BufferedWriter(fw);                            
-			System.out.println("File written Successfully"); 
+			//System.out.println("File written Successfully"); 
 		} catch (IOException ioe) {     
 			ioe.printStackTrace(); 
 		} finally { 
 		} 
                                                    
-		System.out.println("Balancing"); 
-		System.out.println(); 
+		//System.out.println("Balancing"); 
+		//System.out.println(); 
  
                                                                                     		
 		// Reset the motors to make sure we start at a zero position   
@@ -613,12 +636,12 @@ public class Segoway2 extends Thread {
 		right_motor.resetTachoCount(); 
 		right_motor.forward(); 
 		left_motor.forward();                                                           
-		System.out.printf("TIME_FALL_LIMIT is %10.0f(ms)\n", TIME_FALL_LIMIT);             
+		//System.out.printf("TIME_FALL_LIMIT is %10.0f(ms)\n", TIME_FALL_LIMIT);             
 		// NOTE: Balance control loop only takes 0.63ms in EV3 leJOS EVJ 0.9.1-beta 
 		// after 10,000,000 iterations                          
-		System.out.println("loopCount is " + loopCount);          
-		System.out.println("Free Memory is " + freeMemory); 
-		System.out.println();   
+		//System.out.println("loopCount is " + loopCount);          
+		//System.out.println("Free Memory is " + freeMemory); 
+		//System.out.println();   
 		fatigue = 0; 
 		                                                         
 		// while(loopCount<=1E0)  //            1 Done 
@@ -685,6 +708,9 @@ public class Segoway2 extends Thread {
 					   KPOS * motorPos +                        // From MotorRotaionCount of both motors    
 					   KDRIVE * motorControlDrive +             // To improve start/stop performance 
 					   KSPEED * motorSpeed);                    // Motor speed in Deg/Sec 
+			//smoothPower = 0.7 * smoothPower + 0.3 * power;      
+			//smoothPower = 0.8 * smoothPower + 0.2 * power;      
+			//smoothPower = 0.6 * smoothPower + 0.4 * power;      
 			smoothPower = 0.7 * smoothPower + 0.3 * power;      
 			if (Math.abs(smoothPower) < 100)                   
 				tMotorPosOK = System.currentTimeMillis(); 
@@ -714,17 +740,17 @@ public class Segoway2 extends Thread {
 			loopCount++;              
 		} // end of while() loop 
                                 
-		System.out.printf(                                                                                                                                                                                                         
-				"cLoop %4d\ttSmoothedInterval %5.0f(ms)\tfatique %4d(ms)\t    power %5.0f\tsmoothPower %5.0f\tgyroAngle %5.0f             gyroSpeed  %5.0f      gyroAngle  %5.0f motorPos%5.0f     motorSpeed %5.0f\n", 
-				cLoop, tSmoothedInterval * 1000, fatigue, power, smoothPower, gyroAngle, KGYROSPEED * gyroSpeed, KGYROANGLE * gyroAngle,     
-				KPOS * motorPos, KSPEED * motorSpeed);     
+		//System.out.printf(                                                                                                                                                                                                         
+		//		"cLoop %4d\ttSmoothedInterval %5.0f(ms)\tfatique %4d(ms)\t    power %5.0f\tsmoothPower %5.0f\tgyroAngle %5.0f             gyroSpeed  %5.0f      gyroAngle  %5.0f motorPos%5.0f     motorSpeed %5.0f\n", 
+		//		cLoop, tSmoothedInterval * 1000, fatigue, power, smoothPower, gyroAngle, KGYROSPEED * gyroSpeed, KGYROANGLE * gyroAngle,     
+		//		KPOS * motorPos, KSPEED * motorSpeed);     
 		left_motor.flt();        
 		right_motor.flt();            
 		Sound.beepSequenceUp();                      
-		System.out.println("Oops... I fell");                       
-		System.out.println("tInt ms:" + (tInterval * 1000)); 
-		System.out.println();              
-		System.out.println(fatigue); 
+		//System.out.println("Oops... I fell");                       
+		//System.out.println("tInt ms:" + (tInterval * 1000)); 
+		//System.out.println();              
+		//System.out.println(fatigue); 
                               
 		loopCount--;                                           
 		AverageMS = RunTimeMS / loopCount; // 1E6 ms 
