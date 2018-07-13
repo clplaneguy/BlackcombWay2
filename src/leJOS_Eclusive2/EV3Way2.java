@@ -101,17 +101,13 @@ public class EV3Way2 {
 	        //Thread segway = new Segoway2(run, left, right, gyro, WHEEL_SIZE);    // From krchilders
 	        Segoway2 segway = new Segoway2(run, left, right, gyro, WHEEL_SIZE); 
 			segway.setPriority(Thread.MAX_PRIORITY);                               // From krchilders
-			//segway.setDaemon(true);                                                // From krchilders
 			segway.start();                                                        // From krchilders
-			//segway.join();                                                         // From krchilders
-			//segway.run = 1;
 			((Segoway2) segway).wheelDriver(0, 0);
 			Sound.beep();
 			int speed = 0;  
 			int steer = 0;
 			while(((Segoway2) segway).isRunning()) {
-			//while (isRunning()) {
-					// System.out.println("Inside while(Paginated_Executable.isRunning())");
+			// System.out.println("Inside while(Paginated_Executable.isRunning())");
 				int cmd = ir.getRemoteCommand(0);
 				switch (cmd) {
 				case 1: // Top left: Turn left
@@ -132,13 +128,10 @@ public class EV3Way2 {
 					break;
 				}
 				((Segoway2) segway).wheelDriver(speed + steer, speed - steer);
-				if (Button.ESCAPE.isDown())
-					((Segoway2) segway).halt();
+				if (Button.ESCAPE.isDown()) ((Segoway2) segway).halt();
 				Delay.msDelay(100);
 			}
-			// waitForRelease(startStop);
-			// Button.waitForAnyPress();
-		run++;
+			run++;
 		}
 	}
 

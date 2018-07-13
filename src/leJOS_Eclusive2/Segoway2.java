@@ -351,30 +351,30 @@ public class Segoway2 extends Thread {
 		LCD.drawString("Steady robot", 0, 2);                                                    
 		LCD.drawString("to calibrate", 0, 3);                                                          
 		LCD.drawString("the gyro"    , 0, 4);                                            
-	                                                                                    //  From krchilders                  
-		double gSum;                                                               //  From Andy                       
-	    float gMin;                                                                //  From Andy                    
-	    float gMax;                                                                //  From Andy              
+	                                                                          
+		double gSum;                                                                         //  From Andy                       
+	    float gMin;                                                                          //  From Andy                    
+	    float gMax;                                                                          //  From Andy              
 	    int g;
-	        do {                                                                         //  From Andy                    
-	            gSum = 0.0;                                                              //  From Andy                     
-	            gMin =  Float.MAX_VALUE;                                                 //  From Andy                     
-	            gMax = -Float.MAX_VALUE;                                                 //  From Andy                     
-	            for (int i1=0; i1<OFFSET_SAMPLES; i1++)                                  //  From Andy                       
-	            {                                                                        //  From Andy                              
-	                //float g = getAngularVelocity();                                    //  From Andy                                
-	                spGyro.fetchSample(gyroSample, 0);                                   //  From krchilders                                                 
-					g = (int) gyroSample[0];                                             //  From krchilders                                           
-				    if (g > gMax) gMax = g;                
-	                if (g < gMin) gMin = g;                 
-                    gSum += g;                                                           //  From Andy                           
-	                Delay.msDelay(5);                                                    //  From Andy                            
-	            }                                                                        //  From Andy                               
-	        //} while ((gMax - gMin) > 5);   // Reject and sample again if range too large //  From Andy                                   
+	        do {                                                                             //  From Andy                    
+	            gSum = 0.0;                                                                  //  From Andy                     
+	            gMin =  Float.MAX_VALUE;                                                     //  From Andy                     
+	            gMax = -Float.MAX_VALUE;                                                     //  From Andy                     
+	            for (int i1=0; i1<OFFSET_SAMPLES; i1++)                                      //  From Andy                       
+	            {                                                                            //  From Andy                              
+	                //float g = getAngularVelocity();   NXT Command                          //  From Andy                                
+	                spGyro.fetchSample(gyroSample, 0);                                       //  From krchilders                                                 
+					g = (int) gyroSample[0];                                                 //  From krchilders                                           
+				    if (g > gMax) gMax = g;                  
+	                if (g < gMin) gMin = g;                   
+                    gSum += g;                                                               //  From Andy                           
+	                Delay.msDelay(5);                                                        //  From Andy                            
+	            }                                                                            //  From Andy                               
+	        //} while ((gMax - gMin) > 5);   // Reject and sample again if range too large   //  From Andy                                   
 	        //} while ((gMax - gMin) > 4);   // Reject and sample again if range too large                                   
 	        } while ((gMax - gMin) > 3);   // Reject and sample again if range too large                                   
-                                                                                         //  From Andy                              
-	        //Average the sum of the samples.                                            //  From Andy                                          
+                                                                                             //  From Andy                              
+	        //Average the sum of the samples.                                                //  From Andy                                          
 	        offset = (float)(gSum / OFFSET_SAMPLES) + 1; // TODO: Used to have +1, which was mainly for stopping Segway wandering.                                                                                                               
 		if (invertGyro) offset = -offset;                          
 	  }                                                                                                     
@@ -429,7 +429,7 @@ public class Segoway2 extends Thread {
 		// offset = 0.99999*offset             +   0.00001*gyroRaw;                          
 		 
 		gyroSpeed = gyroRaw - offset; // Angular velocity (degrees/sec)                                                
-	                                                                                         //  From krchilders                                
+	                                                                                                 
 		gAngleGlobal +=  gyroSpeed * tInterval;                                                                               
 		gyroAngle     =  gAngleGlobal;            // Absolute angle (degrees)                                                                                
 	}                                                                                        //  From krchilders                            
