@@ -52,10 +52,10 @@ import lejos.utility.Delay;
  */
 // public class SegowayEV3ir {}
 
-public class EV3Way2 {
+public class EV3Way3 {
 	// static final double WHEEL_SIZE = 4.32;
 	static final double WHEEL_SIZE = 5.6;
-	static int run =1;																																															
+	static int runNum =1;																																															
 	static void waitForPress(Touch t) {
 		while (!t.isPressed())
 			Delay.msDelay(100);
@@ -99,14 +99,14 @@ public class EV3Way2 {
 			// Segoway segway = new Segoway(left, right, gyro, WHEEL_SIZE);
 	        //System.out.println("run " + run);
 	        //Thread segway = new Segoway2(run, left, right, gyro, WHEEL_SIZE);    // From krchilders
-	        Segoway2 segway = new Segoway2(run, left, right, gyro, WHEEL_SIZE); 
+	        Segoway3 segway = new Segoway3(runNum, left, right, gyro, WHEEL_SIZE); 
 			segway.setPriority(Thread.MAX_PRIORITY);                               // From krchilders
 			segway.start();                                                        // From krchilders
-			((Segoway2) segway).wheelDriver(0, 0);
+			((Segoway3) segway).wheelDriver(0, 0);
 			Sound.beep();
 			int speed = 0;  
 			int steer = 0;
-			while(((Segoway2) segway).isRunning()) {
+			while(((Segoway3) segway).isRunning()) {
 			// System.out.println("Inside while(Paginated_Executable.isRunning())");
 				int cmd = ir.getRemoteCommand(0);
 				switch (cmd) {
@@ -127,11 +127,11 @@ public class EV3Way2 {
 					steer = 0;
 					break;
 				}
-				((Segoway2) segway).wheelDriver(speed + steer, speed - steer);
-				if (Button.ESCAPE.isDown()) ((Segoway2) segway).halt();
+				((Segoway3) segway).wheelDriver(speed + steer, speed - steer);
+				if (Button.ESCAPE.isDown()) ((Segoway3) segway).halt();
 				Delay.msDelay(100);
 			}
-			run++;
+			runNum++;
 		}
 	}
 
