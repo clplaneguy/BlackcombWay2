@@ -137,9 +137,9 @@ public class Segoway3 extends Thread {
 	 * robot has fallen.                  
 	 */                                                                                                                               
 	//private static final double TIME_FALL_LIMIT  = 700; // originally 1000
-    // private static final double TIME_FALL_LIMIT = 2000;      
-	// private static final double TIME_FALL_LIMIT = 200000; 
-	// private static final double TIME_FALL_LIMIT = 1E3;   
+    //private static final double TIME_FALL_LIMIT = 2000;      
+	//private static final double TIME_FALL_LIMIT = 200000; 
+	//private static final double TIME_FALL_LIMIT = 1E3;   
 	//private static final double TIME_FALL_LIMIT    = 2E3;       
 	//private static final double TIME_FALL_LIMIT    = 1E3;       
 	private static final double TIME_FALL_LIMIT    = 2E3;       
@@ -162,8 +162,7 @@ public class Segoway3 extends Thread {
 	// =====================================================================                      
                                                                                                        
 	// These two xxControlDrive variables are used to control the movement of the                                        
-	// robot. Both                                                                       
-	// are in degrees/second:                                                             
+	// robot. Both are in degrees/second:                                                             
 	/**                                                                                       
 	 * Target speed(degrees per second) for the sum of the two motors.                       
 	 */                                                                                    
@@ -210,8 +209,8 @@ public class Segoway3 extends Thread {
                              	                                                          
 	// Gyro globals                                                                                   
 	//private double gOffset;                                                                 
-	private double gyroSpeed, gyroAngle;                                                       
-	private double gAngleGlobal;                   
+	private double  gyroSpeed, gyroAngle;                                                       
+	private double  gAngleGlobal;                   
 	private boolean invertGyro = true; 
  
                             	
@@ -267,11 +266,11 @@ public class Segoway3 extends Thread {
 	int     loopCount    =  1; // postpone activation of the motors until dt in the loop is stable // From                                                                                                                     
 	                                                                      
 	//int TestInterval = (int) 1E1;  //       10; Did not work                                                        
-	 int TestInterval = (int) 1E2;  //      100; Stoped at 52               Added close Buffered Writer         
-	// int TestInterval = (int) 1E3;  //     1000; Stoped at 972              Added close Buffered Writer 
-	// int TestInterval = (int) 1E4;  //    10000; Stoped at 9966             Added close Buffered Writer           
-	//int TestInterval = (int) 1E5;   //   100000; Stoped at 15993 of 16043   Added close Buffered Writer 
-	// int TestInterval = (int) 1E6;  //  1000000; Program ended   
+	  int TestInterval = (int) 1E2;  //      100; Stoped at 52               Added close Buffered Writer         
+	//int TestInterval = (int) 1E3;  //     1000; Stoped at 972              Added close Buffered Writer 
+	//int TestInterval = (int) 1E4;  //    10000; Stoped at 9966             Added close Buffered Writer           
+	//int TestInterval = (int) 1E5;  //   100000; Stoped at 15993 of 16043   Added close Buffered Writer 
+	//int TestInterval = (int) 1E6;  //  1000000; Program ended   
                                                                               
 	//motorSpeed = SmoothDelta / tSmoothedInterval; 
 	int    [] loopCountA         = new    int [TestInterval]  ;      
@@ -462,13 +461,14 @@ public class Segoway3 extends Thread {
 		// mrcDetla is the change int sum of the motor encoders, update 
 		// motorPos based on this detla 
 		mrcDelta = mrcSum - mrcSumPrev; 
+		
 		//SmoothDelta = 0.75 * SmoothDelta  +  0.25 * mrcDelta;
-		//SmoothDelta = 0.8 * SmoothDelta  +  0.2 * mrcDelta;
-		//SmoothDelta = 0.9 * SmoothDelta  +  0.1 * mrcDelta;
-		//SmoothDelta = 0.8 * SmoothDelta  +  0.2 * mrcDelta;
-		//SmoothDelta = 0.9 * SmoothDelta  +  0.1 * mrcDelta;
+		//SmoothDelta = 0.8  * SmoothDelta  +  0.2  * mrcDelta;
+		//SmoothDelta = 0.9  * SmoothDelta  +  0.1  * mrcDelta;
+		//SmoothDelta = 0.8  * SmoothDelta  +  0.2  * mrcDelta;
+		//SmoothDelta = 0.9  * SmoothDelta  +  0.1  * mrcDelta;
 		//SmoothDelta = 0.75 * SmoothDelta  +  0.25 * mrcDelta;
-		SmoothDelta = 0.6 * SmoothDelta  +  0.4 * mrcDelta;
+		  SmoothDelta = 0.6  * SmoothDelta  +  0.4  * mrcDelta;
 		
 		//motorPos += mrcDelta; 
 		motorPos += SmoothDelta; 
@@ -538,13 +538,12 @@ public class Segoway3 extends Thread {
 			long tNew = System.currentTimeMillis();      
 			tInterval = (tNew - tCalcStart) / 1000.0;                                
 			//tSmoothedInterval = 0.75 * tSmoothedInterval + 0.25 * tInterval; 
-			//tSmoothedInterval = 0.8 * tSmoothedInterval + 0.2 * tInterval; 
+			//tSmoothedInterval = 0.8  * tSmoothedInterval + 0.2  * tInterval; 
 			//tSmoothedInterval = 0.75 * tSmoothedInterval + 0.25 * tInterval; 
-			tSmoothedInterval = 0.7 * tSmoothedInterval + 0.3 * tInterval; 
+			  tSmoothedInterval = 0.7  * tSmoothedInterval + 0.3  * tInterval; 
 			
 			tCalcStart = tNew; 
 		} 
-             
 	} 
  
                 	
@@ -553,18 +552,15 @@ public class Segoway3 extends Thread {
 	 *                                                          
 	 * @return true if the loop is running. 
 	 */                                      
-	public boolean isRunning() { 
-		return running;  
-	} 
+	public boolean isRunning() {return running;} 
  
                  	
 	/**                               
 	 * Stop the control loop 
 	 */                          
-	public void halt() {  
-		running = false;  
-	}      
+	public void halt() {running = false;}      
                                                                                        
+	
 	// --------------------------------------------------------------------- 
 	//                                                         
 	// This is the main balance thread for the robot. 
@@ -622,10 +618,10 @@ public class Segoway3 extends Thread {
 		double KPOS2;                                                                                                                                                                      
 		double KSPEED2;                                                                                                                                                                        
 		                                                                                                                                                                                                                                                          
-		//KGYROANGLE = 16;   KGYROSPEED = 1.3;     KPOS       = 0.2;  KSPEED     = 0.12;                                                                                                                             
-		//KGYROANGLE2 = KGYROANGLE;   KGYROSPEED2 = KGYROSPEED;     KPOS2 = KPOS;  KSPEED2 = KSPEED;                                                                                                            
-		//KGYROANGLE2 = 16;   KGYROSPEED2 = 1.3;     KPOS2 = 0.2;  KSPEED2 = 0.12;                                                                                                              
-		KGYROANGLE2 = 17;   KGYROSPEED2 = 1.3;     KPOS2 = 0.2;  KSPEED2 = 0.12;                                                                                                                   
+		//KGYROANGLE = 16;              KGYROSPEED = 1.3;               KPOS = 0.2;      KSPEED   = 0.12;                                                                                                                             
+		//KGYROANGLE2 = KGYROANGLE;     KGYROSPEED2 = KGYROSPEED;       KPOS2 = KPOS;    KSPEED2 = KSPEED;                                                                                                            
+		//KGYROANGLE2 = 16;             KGYROSPEED2 = 1.3;              KPOS2 = 0.2;     KSPEED2 = 0.12;                                                                                                              
+		  KGYROANGLE2 = 17;             KGYROSPEED2 = 1.3;              KPOS2 = 0.2;     KSPEED2 = 0.12;                                                                                                                   
 	                                                                                                                                                                      
 		try {                                                                                                                                                                     
 			// Specify the file name and path here                                                                                                                                 

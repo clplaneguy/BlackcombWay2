@@ -12,23 +12,7 @@ import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.hardware.sensor.EV3IRSensor;
-//import lejos.nxt.ADSensorPort;                                                                                                                                                                                                                                
-//import lejos.nxt.Button;                                                                                                                                                                                                                           
-//import lejos.nxt.EV3GyroSensor;                                                                                                                                                                                                      
-//import lejos.nxt.EV3IRSensor;                                                                                                                                                                                                           
-//import lejos.nxt.EV3TouchSensor;                                                                                                                                                                                                 
-//import lejos.nxt.MotorPort;                                                                                                                                                                                                           
-//import lejos.nxt.NXTMotor;                                                                                                                                                                                                          
-//import lejos.nxt.SensorPort;                                                                                                                                                                                                  
-//import lejos.nxt.Sound;                                                                                                                                                                                                         
-//import lejos.nxt.UARTPort;                                                                                                                                                                                                      
-//import lejos.nxt.addon.GyroSensor;                                                                                                                                                                                                       
 import lejos.robotics.Touch;
-//import lejos.nxt.comm.Bluetooth;                                                                                                                                                                                                          
-//import lejos.nxt.comm.NXTConnection;                                                                                                                                                                                            
-//import lejos.robotics.navigation.Segoway;                                                                                                                                                                                         
-//import lejos.robotics.navigation.SegowayPilot;                                                                                                                                                                                         
-//import lejos.util.Delay;                                                                                                                                                                                                              
 import lejos.utility.Delay;
 
 /**
